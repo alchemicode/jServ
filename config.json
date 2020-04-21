@@ -1,0 +1,1 @@
+{"ip":"localhost", "port":4040, "Requests": {"GET":true,"POST":true,"PUT":true,"HEAD":true,"DELETE":false,"PATCH":false,"OPTIONS":false}}
