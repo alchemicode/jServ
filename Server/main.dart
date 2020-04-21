@@ -22,12 +22,7 @@ List<Collection> dbs = new List<Collection>();
 Future main() async {
   await readDatabases();
   await readConfig();
-
-  if(ip == "localhost" || ip == "127.0.0.1"){
-    ipAddress = InternetAddress.loopbackIPv4;
-  }else{
-    ipAddress = new InternetAddress(ip);
-  }
+  await createIP();
 
   var server = await HttpServer.bind(
     ipAddress,
@@ -256,4 +251,12 @@ void readDatabases() {
     Collection c = new Collection(name);
     dbs.add(c);
   });
+}
+
+void createIP(){
+  if(ip == "localhost" || ip == "127.0.0.1"){
+    ipAddress = InternetAddress.loopbackIPv4;
+  }else{
+    ipAddress = new InternetAddress(ip);
+  }
 }
