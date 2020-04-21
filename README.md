@@ -24,7 +24,7 @@
 <table border="0">
     <tr>
         <th align="center">
-            Build your backend fast, no strings attached.
+            Build your backend fast, no strings attached
         </th> 
         <th align="center">
             Adapt the server's workflow to your project
@@ -47,7 +47,7 @@
             jServ's driving force is it's use of JSON in it's data structure, allowing for a practical and effortless experience.
         </td>
         <td align="center">
-            jServ's API has been specifically designed to remain versatile and adaptable to your needs
+            jServ's API has been specifically designed to remain versatile and adaptable to your needs.
         </td>
     </tr>
     
