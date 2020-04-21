@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+
 class DataObject{ 
   int id;
   Map data;
@@ -27,5 +28,9 @@ class DataObject{
     return map;
   }
 
+  String toString(){
+    return "id: " + id.toString() + "\ndata: " + data.toString();
+
+  }
   
 }
