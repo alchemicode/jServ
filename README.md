@@ -62,7 +62,7 @@ jServ is extremely flexible. There are very few definite terms provided, as most
 <h3>Data Structure</h3>
 
 
-The data structure relies on two classes, `DataObject` and `Collection`. 
+The data structure relies on three classes, `DataObject`, `AttributeContainer`, and `Collection`. 
  
 
 `DataObject` is the class that all instances in the database come from. When serialized as a JSON object, it appears as the following (with example values),
@@ -74,6 +74,17 @@ The data structure relies on two classes, `DataObject` and `Collection`.
 ```
 
 The reason the object has only two fields is that the developer defines what attributes each object will have within the `data` field. The `id` field is the only definite field to any object, as it is required for the API to be functional. It is dependent on the developer to ensure that the data field is consistent across all objects(if this is what is desired).
+ 
+<br>
+
+`AttributeContainer` is a class that serves the sole purpose of being a proxy between JSON objects passed in the API requests. When serialized as a JSON object, it appears as the following (with example values),
+```json
+{
+    "some-key": "some-value"
+}
+```
+
+Some of the requests requre a single value to be passed in to the request body in the form of an `AttributeContainer` object, as this is the only way to maintain flexible typing within the database. The `AttributeContainer` class acts as a model within the program to translate that data seamlessly to the `Collection` and `DataObject` classes.
  
 <br>
 
@@ -107,7 +118,7 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/query</code></dt>
     <dd>
-    Queries a database for a specific object by id. Returns the whole object.
+    Queries a database for a specific object by id. Returns the whole object in JSON.
     <br>
     Query Parameters:
         <ul>
@@ -119,7 +130,7 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/query/attribute</code></dt>
     <dd>
-    Queries a database for a specific attribute of an object by id and name. Returns the attribute value.
+    Queries a database for a specific attribute of an object by id and name. Returns the attribute value in an <code>AttributeContainer</code> object.
     <br>
     Query Parameters:
         <ul>
@@ -147,7 +158,7 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/add/obj</code></dt>
     <dd>
-    Adds a new JSON object to a database (This request requires you to write your object into the request content).
+        Adds a new JSON object to a database (<em>Requires an <code>AttributeContainer</code> JSON object to be passed in the body</em>).
     <br>
     Query Parameters:
         <ul>
@@ -158,7 +169,7 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/add/attribute</code></dt>
     <dd>
-    Adds an attribute to an object in a database by id (This request requires you to write your object into the request content).
+    Adds an attribute to an object in a database by id (<em>Requires an <code>AttributeContainer</code> JSON object to be passed in the body</em>).
     <br>
     Query Parameters:
         <ul>
@@ -184,7 +195,7 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/mod/attribute</code></dt>
     <dd>
-    Modifies an attribute of an object in a database by id (This request requires you to write your object into the request content).
+    Modifies an attribute of an object in a database by id (<em>Requires an <code>AttributeContainer</code> JSON object to be passed in the body</em>).
     <br>
     Query Parameters:
         <ul>
