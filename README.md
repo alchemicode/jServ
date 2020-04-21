@@ -17,9 +17,9 @@
 </p>
 
 
-<h2 align="center">
+<h3 align="center">
     A flexible database server
-</h2>
+</h3>
 <br><br>
 <table border="0">
     <tr>
@@ -38,17 +38,49 @@
     </tr>
     <tr>
         <td align="center">
-            jServ is an open source project designed to help backend developers get a server, database, and API up and running as soon as possible.
+            jServ is an open source project designed to help backend developers get a server, database, and API up and running as soon as possible.<br>
         </td>
         <td align="center">
-            jServ has a flexible data structure that allows you to customize the database and it's functionality, with or without modifying the code.
+            jServ has a flexible data structure that allows you to customize the database and it's functionality, with or without modifying the code.<br>
         </td>
         <td align="center">
-            jServ's driving force is it's use of JSON in it's data structure, allowing for a practical and effortless experience.
+            jServ's driving force is it's use of JSON in it's data structure, allowing for a practical and effortless experience.<br>
         </td>
         <td align="center">
-            jServ's API has been specifically designed to remain versatile and adaptable to your needs.
+            jServ's API has been specifically designed to remain versatile and adaptable to your needs.<br>
         </td>
     </tr>
-    
 </table>
+<br><br>
+<h2>Program Reference</h2>
+<br><br>
+<p>
+    jServ is extremely flexible. There are very few definite terms provided, as most of it depends on the implementation by the individual developer.
+    <br>
+    <h3>Data Structure</h3>
+    The data structure relies on two classes, `DataObject` and `Collection`. 
+    <br>
+    `DataObject` is the class that all instances in the database come from. When serialized as a JSON object, it appears as the following,
+    ```json
+    {
+        "id": some-int,
+        "data": {"some-key": some-value, ...}
+    }
+    ```
+    The reason the object has only two attributes is that the developer defines what data each object will have within the `data` field. The `id` field is the only definite attribute to any object, as it is required for the API to be functional. It is dependent on the developer to ensure that the data field is consistent across all objects(if this is what is desired).
+    <br>
+    'Collection' is simply a container within the program for a database and its name. When written as a JSON object, it appears as the following,
+    ```json
+    {
+        "name": some-string,
+        "dataList": [
+            {
+            "id": some-int,
+            "data": {"some-key": some-value, ...}
+            }
+        ]
+    }
+    ```
+    The `Collection` class exists to keep track of each database within the server. Within the program, the name corresponds to a filename in the `Databases` folder, which is what comprises the `dataList` in the class.
+    <br><br>
+    <h3>API Reference</h3>
