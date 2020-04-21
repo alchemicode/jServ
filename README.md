@@ -26,13 +26,13 @@
         <th align="center">
             Build your backend fast, no strings attached.
         </th> 
-        <th>
+        <th align="center">
             Adapt the server's workflow to your project
         </th>
-        <th>
+        <th align="center">
             Multiplatform, Simple, and easy to use
         </th>
-        <th>
+        <th align="center">
             Use the built in API to run your apps
         </th>  
     </tr>
