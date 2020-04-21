@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'DataObject.dart';
 import 'Collection.dart';
+import 'AttributeContainer.dart';
 import 'package:path/path.dart';
 
 Map<String, dynamic> requestTypes = {
@@ -114,9 +115,8 @@ void handleGet(HttpRequest r) {
     if (dbs.any((Collection value) => value.name == query)) {
       Collection c = dbs.singleWhere((col) => col.name == query);
       DataObject data = c.dataList.singleWhere((d) => d.id == id);
-      dynamic attribute = data.data[att];
-      print(json.encode(attribute));
-      end = data.data[att].toString();
+      AttributeContainer attribute = new AttributeContainer(att, data.data[att]);
+      end = attribute.toJSON();
     }
   }
 
@@ -164,11 +164,11 @@ void handlePost(HttpRequest r) {
     if (dbs.any((Collection value) => value.name == add)) {
       Collection c = dbs.singleWhere((col) => col.name == add);
       content.then((result){
-        dynamic attribute = json.decode(result)[att];
+        AttributeContainer attribute = new AttributeContainer(att,json.decode(result)[att]);
         DataObject data = c.dataList.singleWhere((d) => d.id == id);
         
         if(!data.data.containsKey(att)){
-          data.data[att] = attribute;
+          data.data[att] = attribute.value;
         c.updateFile();
           end = "Successfully modified $att of $id";
         }else{
@@ -204,10 +204,10 @@ void handlePost(HttpRequest r) {
       Collection c = dbs.singleWhere((col) => col.name == mod);
       content.then((result){
 
-        dynamic attribute = json.decode(result)[att];
+        AttributeContainer attribute = new AttributeContainer(att,json.decode(result)[att]);
         DataObject data = c.dataList.singleWhere((d) => d.id == id);
         if(data.data.containsKey(att)){
-          data.data[att] = attribute;
+          data.data[att] = attribute.value;
           c.updateFile();
           end = "Successfully modified $att of $id in $mod";
         }else{
