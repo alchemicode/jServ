@@ -47,7 +47,7 @@
             jServ's driving force is it's use of JSON in it's data structure, allowing for a practical and effortless experience.<br>
         </td>
         <td align="center">
-            jServ's API has been specifically designed to remain versatile and adaptable to your needs.<br>
+            jServ's API has been specifically designed to be versatile and adaptable to your needs.<br>
         </td>
     </tr>
 </table>
@@ -73,7 +73,7 @@ The data structure relies on two classes, `DataObject` and `Collection`.
 }
 ```
 
-The reason the object has only two attributes is that the developer defines what data each object will have within the `data` field. The `id` field is the only definite attribute to any object, as it is required for the API to be functional. It is dependent on the developer to ensure that the data field is consistent across all objects(if this is what is desired).
+The reason the object has only two fields is that the developer defines what attributes each object will have within the `data` field. The `id` field is the only definite field to any object, as it is required for the API to be functional. It is dependent on the developer to ensure that the data field is consistent across all objects(if this is what is desired).
  
 <br>
 
