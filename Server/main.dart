@@ -40,7 +40,13 @@ Future main() async {
     }
   }
 }
-
+public static bool parseBool(String b){
+  if(b.toLowerCase() == "true"){
+    return true;
+  }else{
+    return false; 
+  }
+}
 void handleRequest(HttpRequest r) {
   String m = r.method;
   try {
@@ -138,13 +144,56 @@ void handlePost(HttpRequest r) {
       Collection c = dbs.singleWhere((col) => col.name == add);
       content.then((result){
         DataObject d = new DataObject.fromJsonString(result);
-        print("result: " + result);
-        print("obj: " + d.toString());
         c.dataList.add(d);
         c.updateFile();
       });
     }
     end = "\nSuccessfully added this object to $add";
+  }
+  if (path == "/add/attribute") {
+    String query = r.uri.queryParameters["q"];
+    int id = int.parse(r.uri.queryParameters["id"]);
+    String att = r.uri.queryParameters["a"];
+    Future<String> content = utf8.decodeStream(r);
+    if (dbs.any((Collection value) => value.name == add)) {
+      Collection c = dbs.singleWhere((col) => col.name == add);
+      content.then((result){
+        dynamic attribute = json.decode(result)[att];
+        DataObject data = c.dataList.singleWhere((d) => d.id == id);
+        data.data[a] = attribute;
+        c.updateFile();
+      });    
+    }
+    end = "\nSuccessfully added this object to $add";
+  }
+  
+  if (path == "/mod") {
+    String mod = r.uri.queryParameters["q"];
+    int id = int.parse(r.uri.queryParameters["id"]);
+    int newId = int.parse(r.uri.queryParameters["v"]);
+    if (dbs.any((Collection value) => value.name == mod)) {
+      Collection c = dbs.singleWhere((col) => col.name == query);
+      DataObject data = c.dataList.singleWhere((d) => d.id == id);
+      data.id = newId;
+      c.updateFile();
+      
+      
+    }
+    end = "Successfully modified $id to $newId";
+  }
+  if (path == "/mod/attribute") {
+    String mod = r.uri.queryParameters["q"];
+    int id = int.parse(r.uri.queryParameters["id"]);
+    int newId = int.parse(r.uri.queryParameters["v"]);
+    if (dbs.any((Collection value) => value.name == mod)) {
+      Collection c = dbs.singleWhere((col) => col.name == query);
+      DataObject data = c.dataList.singleWhere((d) => d.id == id);
+      data.id = newId;
+      c.updateFile();
+      
+      
+    }
+    end = "Successfully modified $id to $newId";
   }
 
   var response = r.response;
