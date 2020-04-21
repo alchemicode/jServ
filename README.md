@@ -21,28 +21,28 @@
     A flexible database server
 </h3>
 
-<p align="center">
-    <div>
-        <h4>
+<p>
+    <div align="left">
+        <h4 align="center">
             Build your backend fast, no strings attached.
         </h4> 
-        <p>
+        <p align="center">
             jServ is an open source project designed to help backend developers get a server, database, and API up and running as soon as possible.
         </p>
     </div>
-    <div>
-        <h4>
+    <div align="center">
+        <h4 align="center">
             Adapt the server's workflow to your project
         </h4> 
-        <p>
+        <p align="center">
             jServ has a flexible data structure that allows you to customize the database and it's functionality, with or without modifying the code.
         </p>
     </div>
-    <div>
-        <h4>
+    <div align="right"> 
+        <h4 align="center">
             Multiplatform, Simple, and easy to use
         </h4> 
-        <p>
+        <p align="center">
             jServ's driving force is it's use of JSON in it's data structure, allowing for a practical and effortless experience.
         </p>
     </div>
