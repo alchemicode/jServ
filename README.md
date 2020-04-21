@@ -3,8 +3,7 @@
 <div id="header" align="center">
     <img src="Media/icon.png" width="256px" height="256px">
     <h1>jServ</h1>
-    <hr>
-    <h2>A database server, deployable on any platform.</h2>
+    <h2>Build your backend fast, no strings attached.</h2>
 </div>
 
 <div id="body" align="center">
