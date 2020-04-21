@@ -143,6 +143,17 @@ jServ's API is built around a system of specific requests and query parameters.
     </dd>
 </dl>
 <dl>
+    <dt><code>__/add/obj</code></dt>
+    <dd>
+    Adds a new JSON object to a database (This request requires you to write your object into the request content).
+    <br>
+    Query Parameters:
+        <ul>
+            <li>q - The name of the database you're adding to
+        </ul>
+    </dd>
+</dl>
+<dl>
     <dt><code>__/add/data</code></dt>
     <dd>
     Adds an attribute to an object in a database by id.
