@@ -10,14 +10,14 @@ class Collection{
 
   Collection(String name){
     this.name = name;
-    file = File("Database/$name.json");
+    this.file = File("Databases/$name.json");
     dataList = new List<DataObject>();
     readFile();
+    
   }
 
   void readFile() async {
     String content;
-
     if(await file.exists()){
       content = await file.readAsString();
       List<dynamic> newList = json.decode(content);
@@ -29,9 +29,7 @@ class Collection{
   }
   void updateFile() async{
     if(await file.exists()){
-      for(DataObject i in dataList){
-        
-      }
+      file.writeAsString(json.encode(dataList));
     }
   }
 }

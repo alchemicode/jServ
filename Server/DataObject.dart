@@ -18,6 +18,8 @@ class DataObject{
   }
   DataObject.fromJsonString(String s){
     Map<String, dynamic> map = json.decode(s);
+    this.id = map["id"];
+    this.data = map["data"];
   }
 
 
