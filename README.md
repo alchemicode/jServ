@@ -106,7 +106,7 @@ jServ's API is built around a system of specific requests and query parameters.
     <dt><code>__/query</code></dt>
     <dd>Queries a specific database for an object by id.</dd>
     <dd>
-        <ul>
+        <ul>Query parameters
             <li>q - The name of the database you're querying
             <li>id - The id of the object you're querying
         </ul>
