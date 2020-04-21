@@ -33,7 +33,6 @@ Future main() async {
     ipAddress,
     port,
   );
-  var obj = new DataObject.withMap(10, {"e": 1, "yee": "ooo"});
   print("Listening on localhost:${server.port}");
 
   await for (HttpRequest request in server) {
