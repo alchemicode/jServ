@@ -7,7 +7,7 @@
 </h1>
 
 <p align="center">
-    img src="https://img.shields.io/github/license/Alchemi/jServ?style=flat-square"
+    <img src="https://img.shields.io/github/license/Alchemi/jServ?style=flat-square">
     
 
 </p>
