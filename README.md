@@ -9,7 +9,7 @@
 <p align="center">
     <img src="https://img.shields.io/github/license/Alchemi/jServ?style=flat-square">
     <img src="https://img.shields.io/github/manifest-json/v/Alchemi/jServ?style=flat-square">
-
+    <img src="https://img.shields.io/badge/Build-In%20Development-red?style=flat-square">
 </p>
 
 <div align="center">
