@@ -8,7 +8,7 @@
 
 <p align="center">
     <img src="https://img.shields.io/github/license/Alchemi/jServ?style=flat-square">
-    
+    <img src="https://img.shields.io/github/manifest-json/v/Alchemi/jServ?style=flat-square">
 
 </p>
 
@@ -18,7 +18,7 @@
 
 </div>
 <p align="center">
-    <h2>Build your backend fast, no strings attached.</h2>
+    Build your backend fast, no strings attached.
 </p>
 
 <div id="body" align="center">
