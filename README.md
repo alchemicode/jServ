@@ -156,15 +156,13 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/add/attribute</code></dt>
     <dd>
-    Adds an attribute to an object in a database by id.
+    Adds an attribute to an object in a database by id (This request requires you to write your object into the request content).
     <br>
     Query Parameters:
         <ul>
             <li>q - The name of the database you're object is in
             <li>id - The id of the object you're adding to
             <li>a - The name of the attribute you're adding
-            <li>t - The type of the attribute you're adding
-            <li>v - The value of the attribute you're adding
         </ul>
     </dd>
 </dl>
@@ -184,15 +182,13 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/mod/attribute</code></dt>
     <dd>
-    Modifies an attribute of an object in a database by id.
+    Modifies an attribute of an object in a database by id (This request requires you to write your object into the request content).
     <br>
     Query Parameters:
         <ul>
             <li>q - The name of the database the object is in
             <li>id - The id of the object you're modifying
             <li>a - The name of the attribute you're modifying
-            <li>t - The type of the attribute value
-            <li>v - The new value of the attribute you're modifying
         </ul>
     </dd>
 </dl>
