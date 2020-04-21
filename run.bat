@@ -1,2 +1,2 @@
-dart main.dart
+dart Server/main.dart
 PAUSE
