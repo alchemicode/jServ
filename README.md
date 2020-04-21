@@ -75,7 +75,7 @@ The data structure relies on two classes, `DataObject` and `Collection`.
 
 The reason the object has only two attributes is that the developer defines what data each object will have within the `data` field. The `id` field is the only definite attribute to any object, as it is required for the API to be functional. It is dependent on the developer to ensure that the data field is consistent across all objects(if this is what is desired).
  
- 
+<br>
 
 'Collection' is simply a container within the program for a database and its name. When written as a JSON object, it appears as the following (with example values),
 
