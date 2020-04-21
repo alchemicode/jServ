@@ -95,7 +95,9 @@ The `Collection` class exists to keep track of each database within the server. 
 
 
 <h3>API Reference</h3>
-
+<a href="https://documenter.getpostman.com/view/11039353/Szf82TeK">
+    Postman API Docs
+</a>
 
 jServ's API is built around a system of specific requests and query parameters.
 
