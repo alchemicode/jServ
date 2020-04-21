@@ -28,7 +28,7 @@ Future main() async {
     ipAddress,
     port,
   );
-  print("Listening on localhost:${server.port}");
+  print("Listening on $ip:${server.port}");
 
   await for (HttpRequest request in server) {
     String m = request.method;
