@@ -164,8 +164,14 @@ void handlePost(HttpRequest r) {
       content.then((result){
         dynamic attribute = json.decode(result)[att];
         DataObject data = c.dataList.singleWhere((d) => d.id == id);
-        data.data[att] = attribute;
+        
+        if(!data.data.containsKey(att)){
+          data.data[att] = attribute;
         c.updateFile();
+          end = "Successfully modified $att of $id";
+        }else{
+          end = "The attribute $att already exists in object $id";
+        }
       });    
     }
     end = "\nSuccessfully added $id object to $add";
@@ -193,13 +199,20 @@ void handlePost(HttpRequest r) {
     if (dbs.any((Collection value) => value.name == mod)) {
       Collection c = dbs.singleWhere((col) => col.name == mod);
       content.then((result){
+
         dynamic attribute = json.decode(result)[att];
         DataObject data = c.dataList.singleWhere((d) => d.id == id);
-        data.data[att] = attribute;
-        c.updateFile();
+        if(data.data.containsKey(att)){
+          data.data[att] = attribute;
+          c.updateFile();
+          end = "Successfully modified $att of $id in $mod";
+        }else{
+          end = "The attribute $att does not exist in object $id";
+        }
+        
       });    
     }
-    end = "Successfully modified $att of $id in $mod";
+    
   }
 
   var response = r.response;
