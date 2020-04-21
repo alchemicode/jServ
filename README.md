@@ -157,7 +157,7 @@ jServ's API is built around a system of specific requests and query parameters.
     </dd>
 </dl>
 <dl>
-    <dt><code>__/mod</code></dt>
+    <dt><code>__/mod/data</code></dt>
     <dd>
     Modifies an attribute of an object in a database by id.
     <br>
