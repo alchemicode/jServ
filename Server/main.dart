@@ -13,6 +13,7 @@ Map<String, dynamic> requestTypes = {
   "OPTIONS": false
 };
 String ip = "localhost";
+InternetAddress ipAddress;
 int port = 4040;
 List<Collection> dbs = new List<Collection>();
 
@@ -24,8 +25,14 @@ Future main() async {
 
   await readConfig();
 
+  if(ip == "localhost" || ip == "127.0.0.1"){
+    ipAddress = InternetAddress.loopbackIPv4;
+  }else{
+    ipAddress = new InternetAddress(ip);
+  }
+
   var server = await HttpServer.bind(
-    InternetAddress.loopbackIPv4,
+    ipAddress,
     port,
   );
   var obj = new DataObject.withMap(10, {"e": 1, "yee": "ooo"});
