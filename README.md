@@ -104,9 +104,8 @@ jServ's API is built around a system of specific requests and query parameters.
  
 <dl>
     <dt><code>__/query</code></dt>
-    <br>
     <dd>
-    Queries a specific database for an object by id.
+    Queries a database for a specific object by id. Returns the whole object.
     <br>
     Query Parameters:
         <ul>
@@ -114,11 +113,61 @@ jServ's API is built around a system of specific requests and query parameters.
             <li>id - The id of the object you're querying
         </ul>
     </dd>
-    
+</dl>
+<dl>
+    <dt><code>__/query/attribute</code></dt>
+    <dd>
+    Queries a database for a specific attribute of an object by id and name. Returns the attribute value.
+    <br>
+    Query Parameters:
+        <ul>
+            <li>q - The name of the database you're querying
+            <li>id - The id of the object you're querying
+            <li>a - the name of the attribute you're querying
+        </ul>
+    </dd>
 </dl>
  
+<h4>POST Requests</h4>
 
-
-
-
+<dl>
+    <dt><code>__/add</code></dt>
+    <dd>
+    Adds a new object to a database by id.
+    <br>
+    Query Parameters:
+        <ul>
+            <li>q - The name of the database you're adding to
+            <li>id - The id of the object you're adding
+        </ul>
+    </dd>
+</dl>
+<dl>
+    <dt><code>__/add/data</code></dt>
+    <dd>
+    Adds an attribute to an object in a database by id.
+    <br>
+    Query Parameters:
+        <ul>
+            <li>q - The name of the database you're object is in
+            <li>id - The id of the object you're adding to
+            <li>a - The name of the attribute you're adding
+            <li>v - The value of the attribute you're adding
+        </ul>
+    </dd>
+</dl>
+<dl>
+    <dt><code>__/mod</code></dt>
+    <dd>
+    Modifies an attribute of an object in a database by id.
+    <br>
+    Query Parameters:
+        <ul>
+            <li>q - The name of the database the object is in
+            <li>id - The id of the object you're modifying to
+            <li>a - The name of the attribute you're modifying
+            <li>v - The new value of the attribute you're modifying
+        </ul>
+    </dd>
+</dl>
 
