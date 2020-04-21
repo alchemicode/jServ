@@ -21,8 +21,8 @@
     
 
 </div>
-<p align="center" font-size="12px">
-    Build your backend fast, no strings attached.
+<p align="center">
+    <h4>Build your backend fast, no strings attached.</h4>
 </p>
 
 <div id="body" align="center">
