@@ -133,7 +133,7 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/add</code></dt>
     <dd>
-    Adds a new object to a database by id.
+    Adds a new empty object to a database by id.
     <br>
     Query Parameters:
         <ul>
