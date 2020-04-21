@@ -157,6 +157,19 @@ jServ's API is built around a system of specific requests and query parameters.
     </dd>
 </dl>
 <dl>
+    <dt><code>__/mod</code></dt>
+    <dd>
+    Modifies the id of an object in a database by id.
+    <br>
+    Query Parameters:
+        <ul>
+            <li>q - The name of the database the object is in
+            <li>id - The id of the object you're modifying
+            <li>v - The new id of the object you're modifying
+        </ul>
+    </dd>
+</dl>
+<dl>
     <dt><code>__/mod/data</code></dt>
     <dd>
     Modifies an attribute of an object in a database by id.
@@ -164,7 +177,7 @@ jServ's API is built around a system of specific requests and query parameters.
     Query Parameters:
         <ul>
             <li>q - The name of the database the object is in
-            <li>id - The id of the object you're modifying to
+            <li>id - The id of the object you're modifying
             <li>a - The name of the attribute you're modifying
             <li>v - The new value of the attribute you're modifying
         </ul>
