@@ -112,7 +112,7 @@ void handleGet(HttpRequest r) {
     if (dbs.any((Collection value) => value.name == query)) {
       Collection c = dbs.singleWhere((col) => col.name == query);
       DataObject data = c.dataList.singleWhere((d) => d.id == id);
-      end = data.data[att];
+      end = data.data[att].toString();
     }
   }
 
