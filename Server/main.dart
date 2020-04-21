@@ -18,11 +18,9 @@ int port = 4040;
 List<Collection> dbs = new List<Collection>();
 
 Future main() async {
-  Collection t = new Collection("db");
-  dbs.add(t);
   
   
-
+  
   await readConfig();
 
   if(ip == "localhost" || ip == "127.0.0.1"){
@@ -192,13 +190,15 @@ void handlePost(HttpRequest r) {
     String mod = r.uri.queryParameters["q"];
     int id = int.parse(r.uri.queryParameters["id"]);
     int newId = int.parse(r.uri.queryParameters["v"]);
+    Future<String> content = utf8.decodeStream(r);
     if (dbs.any((Collection value) => value.name == mod)) {
-      Collection c = dbs.singleWhere((col) => col.name == mod);
-      DataObject data = c.dataList.singleWhere((d) => d.id == id);
-      data.id = newId;
-      c.updateFile();
-      
-      
+      Collection c = dbs.singleWhere((col) => col.name == add);
+      content.then((result){
+        dynamic attribute = json.decode(result)[att];
+        DataObject data = c.dataList.singleWhere((d) => d.id == id);
+        data.data[att] = attribute;
+        c.updateFile();
+      });    
     }
     end = "Successfully modified $id to $newId";
   }
@@ -232,4 +232,11 @@ Future readConfig() async {
   ip = map["ip"];
   port = map["port"];
   requestTypes = map["Requests"];
+}
+
+Future<List<File>> readDatabases(){
+  Directory dir = new Directory("Databases");
+  List<FileSystemEntity> files = new List<FileSystemEntity>();
+  dir.list(recursive: false);
+  
 }
