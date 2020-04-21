@@ -40,7 +40,7 @@ Future main() async {
     }
   }
 }
-public static bool parseBool(String b){
+bool parseBool(String b){
   if(b.toLowerCase() == "true"){
     return true;
   }else{
@@ -151,7 +151,7 @@ void handlePost(HttpRequest r) {
     end = "\nSuccessfully added this object to $add";
   }
   if (path == "/add/attribute") {
-    String query = r.uri.queryParameters["q"];
+    String add = r.uri.queryParameters["q"];
     int id = int.parse(r.uri.queryParameters["id"]);
     String att = r.uri.queryParameters["a"];
     Future<String> content = utf8.decodeStream(r);
@@ -160,7 +160,7 @@ void handlePost(HttpRequest r) {
       content.then((result){
         dynamic attribute = json.decode(result)[att];
         DataObject data = c.dataList.singleWhere((d) => d.id == id);
-        data.data[a] = attribute;
+        data.data[att] = attribute;
         c.updateFile();
       });    
     }
@@ -172,7 +172,7 @@ void handlePost(HttpRequest r) {
     int id = int.parse(r.uri.queryParameters["id"]);
     int newId = int.parse(r.uri.queryParameters["v"]);
     if (dbs.any((Collection value) => value.name == mod)) {
-      Collection c = dbs.singleWhere((col) => col.name == query);
+      Collection c = dbs.singleWhere((col) => col.name == mod);
       DataObject data = c.dataList.singleWhere((d) => d.id == id);
       data.id = newId;
       c.updateFile();
@@ -186,7 +186,7 @@ void handlePost(HttpRequest r) {
     int id = int.parse(r.uri.queryParameters["id"]);
     int newId = int.parse(r.uri.queryParameters["v"]);
     if (dbs.any((Collection value) => value.name == mod)) {
-      Collection c = dbs.singleWhere((col) => col.name == query);
+      Collection c = dbs.singleWhere((col) => col.name == mod);
       DataObject data = c.dataList.singleWhere((d) => d.id == id);
       data.id = newId;
       c.updateFile();
