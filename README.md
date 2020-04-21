@@ -16,14 +16,11 @@
     </a>
 </p>
 
-<div align="center">
 
-    
+<h3 align="center">
+    Build your backend fast, no strings attached.
+</h3>
 
-</div>
-<p align="center">
-    <h4>Build your backend fast, no strings attached.</h4>
-</p>
 
 <div id="body" align="center">
     
