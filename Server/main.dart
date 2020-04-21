@@ -96,6 +96,7 @@ void handleGet(HttpRequest r) {
   String path = r.uri.path;
 
   if (path == "/query") {
+    print("Object query from ${r.connectionInfo.remoteAddress}");
     String query = r.uri.queryParameters["q"];
     int id = int.parse(r.uri.queryParameters["id"]);
     if (dbs.any((Collection value) => value.name == query)) {
@@ -106,12 +107,15 @@ void handleGet(HttpRequest r) {
   }
 
   if (path == "/query/attribute") {
+    print("Attribute query from ${r.connectionInfo.remoteAddress}");
     String query = r.uri.queryParameters["q"];
     int id = int.parse(r.uri.queryParameters["id"]);
     String att = r.uri.queryParameters["a"];
     if (dbs.any((Collection value) => value.name == query)) {
       Collection c = dbs.singleWhere((col) => col.name == query);
       DataObject data = c.dataList.singleWhere((d) => d.id == id);
+      dynamic attribute = data.data[att];
+      print(json.encode(attribute));
       end = data.data[att].toString();
     }
   }
@@ -126,6 +130,7 @@ void handlePost(HttpRequest r) {
   String path = r.uri.path;
 
   if (path == "/add") {
+    print("Add request from ${r.connectionInfo.remoteAddress}");
     String add = r.uri.queryParameters["q"];
     int id = int.parse(r.uri.queryParameters["id"]);
     if (dbs.any((Collection value) => value.name == add)) {
@@ -137,6 +142,7 @@ void handlePost(HttpRequest r) {
   }
 
   if (path == "/add/obj") {
+    print("Object add request from ${r.connectionInfo.remoteAddress}");
     String add = r.uri.queryParameters["q"];
     Future<String> content = utf8.decodeStream(r);
     if (dbs.any((Collection value) => value.name == add)) {
@@ -150,6 +156,7 @@ void handlePost(HttpRequest r) {
     end = "\nSuccessfully added this object to $add";
   }
   if (path == "/add/attribute") {
+    print("Attribute add request from ${r.connectionInfo.remoteAddress}");
     String add = r.uri.queryParameters["q"];
     int id = int.parse(r.uri.queryParameters["id"]);
     String att = r.uri.queryParameters["a"];
@@ -173,6 +180,7 @@ void handlePost(HttpRequest r) {
   }
   
   if (path == "/mod") {
+    print("Object mod request from ${r.connectionInfo.remoteAddress}");
     String mod = r.uri.queryParameters["q"];
     int id = int.parse(r.uri.queryParameters["id"]);
     int newId = int.parse(r.uri.queryParameters["v"]);
@@ -187,6 +195,7 @@ void handlePost(HttpRequest r) {
     end = "Successfully modified $id to $newId";
   }
   if (path == "/mod/attribute") {
+    print("Attribute mod request from ${r.connectionInfo.remoteAddress}");
     String mod = r.uri.queryParameters["q"];
     int id = int.parse(r.uri.queryParameters["id"]);
     String att = r.uri.queryParameters["a"];
