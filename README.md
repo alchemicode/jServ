@@ -77,7 +77,7 @@ The reason the object has only two attributes is that the developer defines what
  
 <br>
 
-'Collection' is simply a container within the program for a database and its name. When written as a JSON object, it appears as the following (with example values),
+`Collection` is simply a container within the program for a database and its name. When written as a JSON object, it appears as the following (with example values),
 
 ```json
 {
@@ -95,4 +95,26 @@ The `Collection` class exists to keep track of each database within the server. 
 
 
 <h3>API Reference</h3>
+
+
+jServ's API is built around a system of specific requests and query parameters.
+
+
+<h4>GET Requests</h4>
+ 
+<dl>
+    <dt><code>__/query</code></dt>
+    <dd>Queries a specific database for an object by id.</dd>
+    <dd>
+        <ul>
+            <li>q - The name of the database you're querying
+            <li>id - The id of the object you're querying
+        </ul>
+    </dd>
+</dl>
+ 
+
+
+
+
 
