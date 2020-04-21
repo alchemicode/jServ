@@ -22,7 +22,7 @@
 </h3>
 
 <p>
-    <div align="left">
+    <div style="float: left" align="left">
         <h4 align="center">
             Build your backend fast, no strings attached.
         </h4> 
@@ -30,7 +30,7 @@
             jServ is an open source project designed to help backend developers get a server, database, and API up and running as soon as possible.
         </p>
     </div>
-    <div align="center">
+    <div style="float: left" align="center">
         <h4 align="center">
             Adapt the server's workflow to your project
         </h4> 
@@ -38,7 +38,7 @@
             jServ has a flexible data structure that allows you to customize the database and it's functionality, with or without modifying the code.
         </p>
     </div>
-    <div align="right"> 
+    <div style="float: left" align="right"> 
         <h4 align="center">
             Multiplatform, Simple, and easy to use
         </h4> 
