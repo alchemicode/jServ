@@ -40,13 +40,15 @@ Future main() async {
     }
   }
 }
-bool parseBool(String b){
-  if(b.toLowerCase() == "true"){
+
+bool parseBool(String b) {
+  if (b.toLowerCase() == "true") {
     return true;
-  }else{
-    return false; 
+  } else {
+    return false;
   }
 }
+
 void handleRequest(HttpRequest r) {
   String m = r.method;
   try {
@@ -115,7 +117,8 @@ void handleGet(HttpRequest r) {
     if (dbs.any((Collection value) => value.name == query)) {
       Collection c = dbs.singleWhere((col) => col.name == query);
       DataObject data = c.dataList.singleWhere((d) => d.id == id);
-      AttributeContainer attribute = new AttributeContainer(att, data.data[att]);
+      AttributeContainer attribute =
+          new AttributeContainer(att, data.data[att]);
       end = attribute.toJSON();
     }
   }
@@ -137,25 +140,27 @@ void handlePost(HttpRequest r) {
       Collection c = dbs.singleWhere((col) => col.name == add);
       c.dataList.add(new DataObject.emptyMap(id));
       c.updateFile();
-      end = "Successfully added object $id to $add";
+      var response = r.response;
+      response.write("Successfully added object $id to $add");
+      response.close();
     }
-  }
-
-  if (path == "/add/obj") {
+  } else if (path == "/add/obj") {
     print("Object add request from ${r.connectionInfo.remoteAddress}");
     String add = r.uri.queryParameters["q"];
     Future<String> content = utf8.decodeStream(r);
     if (dbs.any((Collection value) => value.name == add)) {
       Collection c = dbs.singleWhere((col) => col.name == add);
-      content.then((result){
+      content.then((result) {
         DataObject d = new DataObject.fromJsonString(result);
         c.dataList.add(d);
         c.updateFile();
+        var response = r.response;
+        response.write("\nSuccessfully added this object to $add");
+        response.close();
       });
     }
-    end = "\nSuccessfully added this object to $add";
-  }
-  if (path == "/add/attribute") {
+  } else if (path == "/add/attribute") {
+    String newEnd = "";
     print("Attribute add request from ${r.connectionInfo.remoteAddress}");
     String add = r.uri.queryParameters["q"];
     int id = int.parse(r.uri.queryParameters["id"]);
@@ -163,23 +168,25 @@ void handlePost(HttpRequest r) {
     Future<String> content = utf8.decodeStream(r);
     if (dbs.any((Collection value) => value.name == add)) {
       Collection c = dbs.singleWhere((col) => col.name == add);
-      content.then((result){
-        AttributeContainer attribute = new AttributeContainer(att,json.decode(result)[att]);
+      content.then((result) {
+        AttributeContainer attribute =
+            new AttributeContainer(att, json.decode(result)[att]);
         DataObject data = c.dataList.singleWhere((d) => d.id == id);
-        
-        if(!data.data.containsKey(att)){
+        print(attribute.key);
+        if (!data.data.containsKey(attribute.key)) {
           data.data[att] = attribute.value;
-        c.updateFile();
-          end = "Successfully modified $att of $id";
-        }else{
-          end = "The attribute $att already exists in object $id";
+          c.updateFile();
+          var response = r.response;
+          response.write("Successfully added $att to $id");
+          response.close();
+        } else {
+          var response = r.response;
+          response.write("The attribute $att already exists in object $id");
+          response.close();
         }
-      });    
+      });
     }
-    end = "\nSuccessfully added $id object to $add";
-  }
-  
-  if (path == "/mod") {
+  } else if (path == "/mod") {
     print("Object mod request from ${r.connectionInfo.remoteAddress}");
     String mod = r.uri.queryParameters["q"];
     int id = int.parse(r.uri.queryParameters["id"]);
@@ -189,12 +196,12 @@ void handlePost(HttpRequest r) {
       DataObject data = c.dataList.singleWhere((d) => d.id == id);
       data.id = newId;
       c.updateFile();
-      
-      
+      var response = r.response;
+      response.write("Successfully modified $id to $newId");
+      response.close();
     }
-    end = "Successfully modified $id to $newId";
-  }
-  if (path == "/mod/attribute") {
+  } else if (path == "/mod/attribute") {
+    String newEnd = "";
     print("Attribute mod request from ${r.connectionInfo.remoteAddress}");
     String mod = r.uri.queryParameters["q"];
     int id = int.parse(r.uri.queryParameters["id"]);
@@ -202,26 +209,31 @@ void handlePost(HttpRequest r) {
     Future<String> content = utf8.decodeStream(r);
     if (dbs.any((Collection value) => value.name == mod)) {
       Collection c = dbs.singleWhere((col) => col.name == mod);
-      content.then((result){
+      content.then((result) {
+        AttributeContainer attribute =
+            new AttributeContainer(att, json.decode(result)[att]);
 
-        AttributeContainer attribute = new AttributeContainer(att,json.decode(result)[att]);
         DataObject data = c.dataList.singleWhere((d) => d.id == id);
-        if(data.data.containsKey(att)){
+
+        if (data.data.containsKey(att)) {
           data.data[att] = attribute.value;
           c.updateFile();
-          end = "Successfully modified $att of $id in $mod";
-        }else{
-          end = "The attribute $att does not exist in object $id";
+          var response = r.response;
+          response.write("Successfully modified $att of $id in $mod");
+          response.close();
+        } else {
+          var response = r.response;
+          response.write("The attribute $att does not exist in object $id");
+          response.close();
         }
-        
-      });    
+      });
     }
-    
+    end = newEnd;
+  } else {
+    var response = r.response;
+    response.write("Error: Invalid request");
+    response.close();
   }
-
-  var response = r.response;
-  response.write(end);
-  response.close();
 }
 
 void handlePut(HttpRequest r) {}
@@ -252,7 +264,7 @@ Future readConfig() async {
 
 void readDatabases() {
   Directory dir = new Directory("Databases");
-  dir.list(recursive: false).listen((FileSystemEntity e){
+  dir.list(recursive: false).listen((FileSystemEntity e) {
     print("file: ");
     print(e.path);
     String name = basename(e.path).split(".")[0];
@@ -262,10 +274,10 @@ void readDatabases() {
   });
 }
 
-void createIP(){
-  if(ip == "localhost" || ip == "127.0.0.1"){
+void createIP() {
+  if (ip == "localhost" || ip == "127.0.0.1") {
     ipAddress = InternetAddress.loopbackIPv4;
-  }else{
+  } else {
     ipAddress = new InternetAddress(ip);
   }
 }
