@@ -164,7 +164,7 @@ void handlePost(HttpRequest r) {
         c.updateFile();
       });    
     }
-    end = "\nSuccessfully added this object to $add";
+    end = "\nSuccessfully added $id object to $add";
   }
   
   if (path == "/mod") {
