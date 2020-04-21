@@ -19,7 +19,8 @@ List<Collection> dbs = new List<Collection>();
 
 Future main() async {
   
-  
+  Collection c1 = new Collection("db");
+  dbs.add(c1);
   
   await readConfig();
 
