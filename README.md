@@ -7,7 +7,7 @@
 </h1>
 
 <p align="center">
-    <img src="https://img.shields.io/github/license/Alchemi/jServ?style=flat-square">
+    <img src="https://img.shields.io/badge/license-Apache%202.0-green?style=flat-square">
     <img src="https://img.shields.io/github/manifest-json/v/Alchemi/jServ?style=flat-square">
     <img src="https://img.shields.io/badge/Build-In%20Development-red?style=flat-square">
     <img src="https://img.shields.io/badge/Platforms-Windows-brightgreen?style=flat-square">
