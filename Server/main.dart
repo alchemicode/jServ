@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 import 'DataObject.dart';
 import 'Collection.dart';
+import 'package:path/path.dart';
 
 Map<String, dynamic> requestTypes = {
   "GET": true,
@@ -18,10 +20,7 @@ int port = 4040;
 List<Collection> dbs = new List<Collection>();
 
 Future main() async {
-  
-  Collection c1 = new Collection("db");
-  dbs.add(c1);
-  
+  await readDatabases();
   await readConfig();
 
   if(ip == "localhost" || ip == "127.0.0.1"){
@@ -190,10 +189,10 @@ void handlePost(HttpRequest r) {
   if (path == "/mod/attribute") {
     String mod = r.uri.queryParameters["q"];
     int id = int.parse(r.uri.queryParameters["id"]);
-    int newId = int.parse(r.uri.queryParameters["v"]);
+    String att = r.uri.queryParameters["a"];
     Future<String> content = utf8.decodeStream(r);
     if (dbs.any((Collection value) => value.name == mod)) {
-      Collection c = dbs.singleWhere((col) => col.name == add);
+      Collection c = dbs.singleWhere((col) => col.name == mod);
       content.then((result){
         dynamic attribute = json.decode(result)[att];
         DataObject data = c.dataList.singleWhere((d) => d.id == id);
@@ -201,7 +200,7 @@ void handlePost(HttpRequest r) {
         c.updateFile();
       });    
     }
-    end = "Successfully modified $id to $newId";
+    end = "Successfully modified $att of $id in $mod";
   }
 
   var response = r.response;
@@ -235,9 +234,14 @@ Future readConfig() async {
   requestTypes = map["Requests"];
 }
 
-Future<List<File>> readDatabases(){
+void readDatabases() {
   Directory dir = new Directory("Databases");
-  List<FileSystemEntity> files = new List<FileSystemEntity>();
-  dir.list(recursive: false);
-  
+  dir.list(recursive: false).listen((FileSystemEntity e){
+    print("file: ");
+    print(e.path);
+    String name = basename(e.path).split(".")[0];
+    print(name);
+    Collection c = new Collection(name);
+    dbs.add(c);
+  });
 }
