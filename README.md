@@ -11,6 +11,7 @@
     <img src="https://img.shields.io/github/manifest-json/v/Alchemi/jServ?style=flat-square">
     <img src="https://img.shields.io/badge/Build-In%20Development-red?style=flat-square">
     <img src="https://img.shields.io/badge/Platforms-Windows-brightgreen?style=flat-square">
+    <img src="https://img.shields.io/badge/Postman-API_Ready-orange?style=flat-square&logo=postman">
 </p>
 
 <div align="center">
