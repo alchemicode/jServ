@@ -9,7 +9,7 @@
 <p align="center">
     <img src="https://img.shields.io/badge/license-Apache%202.0-green?style=flat-square">
     <img src="https://img.shields.io/github/manifest-json/v/kketg/jServ?style=flat-square">
-    <img src="https://img.shields.io/badge/Build-In%20Development-red?style=flat-square">
+    <img src="https://img.shields.io/badge/Build-Functional-orange?style=flat-square">
     <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20OS%20X%20%7C%20Linux-brightgreen?style=flat-square">
     <a href="https://www.getpostman.com/collections/289f0bfba5cf1a9572c7">
         <img src="https://img.shields.io/badge/Postman-API_Ready-orange?style=flat-square&logo=postman">
