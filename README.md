@@ -256,5 +256,10 @@ jServ's API is built around a system of specific requests and query parameters.
         </ul>
     </dd>
 </dl>
+<br>
+<h2>License and Copyright Notice</h2>
+<p align="center">
+Copyright (c) 2019, Kristofer Ter-Gabrielyan. All Rights Reserved. 
 
-
+Permission to modify and redistribute is granted under the terms of the Apache 2.0 
+</p>
