@@ -168,7 +168,7 @@ jServ's API is built around a system of specific requests and query parameters.
     </dd>
 </dl>
 <dl>
-    <dt><code>__/add/obj</code></dt>
+    <dt><code>__/add/object</code></dt>
     <dd>
         Adds a new JSON object to a database (<em>Requires an <code>DataObject</code> JSON object to be passed in the body</em>).
     <br>
@@ -192,7 +192,7 @@ jServ's API is built around a system of specific requests and query parameters.
     </dd>
 </dl>
 <dl>
-    <dt><code>__/mod</code></dt>
+    <dt><code>__/mod/object</code></dt>
     <dd>
     Modifies the id of an object in a database by id.
     <br>
@@ -217,4 +217,33 @@ jServ's API is built around a system of specific requests and query parameters.
         </ul>
     </dd>
 </dl>
+
+<h4>DELETE Requests</h4>
+
+<dl>
+    <dt><code>__/delete/object</code></dt>
+    <dd>
+    Deletes an object from a database by id.
+    <br>
+    Query Parameters:
+        <ul>
+            <li>q - The name of the database you're deleting from
+            <li>id - The id of the object you're deleting
+        </ul>
+    </dd>
+</dl>
+<dl>
+    <dt><code>__/delete/attribute</code></dt>
+    <dd>
+        Deletes an attribute from an object by id.
+    <br>
+    Query Parameters:
+        <ul>
+            <li>q - The name of the database you're deleting from
+            <li>id - The id of the object you're deleting
+            <li>a - The name of the attribute you're deleting
+        </ul>
+    </dd>
+</dl>
+
 
