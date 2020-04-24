@@ -122,8 +122,8 @@ jServ's API is built around a system of specific requests and query parameters.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the collection you're querying
-            <li>id - The id of the object you're querying
+            <li>q - The name of the collection you're querying</li>
+            <li>id - The id of the object you're querying</li>
         </ul>
     </dd>
 </dl>
@@ -134,9 +134,9 @@ jServ's API is built around a system of specific requests and query parameters.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the collection you're querying
-            <li>id - The id of the object you're querying
-            <li>a - the name of the attribute you're querying
+            <li>q - The name of the collection you're querying</li>
+            <li>id - The id of the object you're querying</li>
+            <li>a - the name of the attribute you're querying</li>
         </ul>
     </dd>
 </dl>
@@ -147,8 +147,8 @@ jServ's API is built around a system of specific requests and query parameters.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the collection you're querying
-            <li>a - the name of the attributes you're querying
+            <li>q - The name of the collection you're querying</li>
+            <li>a - the name of the attributes you're querying</li>
         </ul>
     </dd>
 </dl>
@@ -159,7 +159,7 @@ jServ's API is built around a system of specific requests and query parameters.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the collection you're querying
+            <li>q - The name of the collection you're querying</li>
         </ul>
     </dd>
 </dl>
@@ -173,8 +173,8 @@ jServ's API is built around a system of specific requests and query parameters.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the collection you're adding to
-            <li>id - The id of the object you're adding
+            <li>q - The name of the collection you're adding to</li>
+            <li>id - The id of the object you're adding</li>
         </ul>
     </dd>
 </dl>
@@ -185,7 +185,7 @@ jServ's API is built around a system of specific requests and query parameters.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the collection you're adding to
+            <li>q - The name of the collection you're adding to</li>
         </ul>
     </dd>
 </dl>
@@ -196,9 +196,9 @@ jServ's API is built around a system of specific requests and query parameters.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the collection you're object is in
-            <li>id - The id of the object you're adding to
-            <li>a - The name of the attribute you're adding
+            <li>q - The name of the collection you're object is in</li>
+            <li>id - The id of the object you're adding to</li>
+            <li>a - The name of the attribute you're adding</li>
         </ul>
     </dd>
 </dl>
@@ -209,9 +209,9 @@ jServ's API is built around a system of specific requests and query parameters.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the collection the object is in
-            <li>id - The id of the object you're modifying
-            <li>v - The new id of the object you're modifying
+            <li>q - The name of the collection the object is in</li>
+            <li>id - The id of the object you're modifying</li>
+            <li>v - The new id of the object you're modifying</li>
         </ul>
     </dd>
 </dl>
@@ -222,9 +222,9 @@ jServ's API is built around a system of specific requests and query parameters.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the collection the object is in
-            <li>id - The id of the object you're modifying
-            <li>a - The name of the attribute you're modifying
+            <li>q - The name of the collection the object is in</li>
+            <li>id - The id of the object you're modifying</li>
+            <li>a - The name of the attribute you're modifying</li>
         </ul>
     </dd>
 </dl>
@@ -238,8 +238,8 @@ jServ's API is built around a system of specific requests and query parameters.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the collection you're deleting from
-            <li>id - The id of the object you're deleting
+            <li>q - The name of the collection you're deleting from</li>
+            <li>id - The id of the object you're deleting</li>
         </ul>
     </dd>
 </dl>
@@ -250,9 +250,9 @@ jServ's API is built around a system of specific requests and query parameters.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the collection you're deleting from
-            <li>id - The id of the object you're deleting
-            <li>a - The name of the attribute you're deleting
+            <li>q - The name of the collection you're deleting from</li>
+            <li>id - The id of the object you're deleting</li>
+            <li>a - The name of the attribute you're deleting</li>
         </ul>
     </dd>
 </dl>
