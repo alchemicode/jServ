@@ -155,12 +155,11 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/query/newId</code></dt>
     <dd>
-    Checks if an object of the given id exists within a collection
+    Returns an unused id in a collection
     <br>
     Query Parameters:
         <ul>
             <li>q - The name of the collection you're querying
-            <li>id - the id you're checking
         </ul>
     </dd>
 </dl>
