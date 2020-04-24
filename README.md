@@ -118,11 +118,11 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/query</code></dt>
     <dd>
-    Queries a database for a specific object by id. Returns the whole object in JSON.
+    Queries a collection for a specific object by id. Returns the whole object in JSON.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the database you're querying
+            <li>q - The name of the collection you're querying
             <li>id - The id of the object you're querying
         </ul>
     </dd>
@@ -130,11 +130,11 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/query/attribute</code></dt>
     <dd>
-    Queries a database for a specific attribute of an object by id and name. Returns the attribute value in an <code>AttributeContainer</code> object.
+    Queries a collection for a specific attribute of an object by id and name. Returns the attribute value in an <code>AttributeContainer</code> object.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the database you're querying
+            <li>q - The name of the collection you're querying
             <li>id - The id of the object you're querying
             <li>a - the name of the attribute you're querying
         </ul>
@@ -143,12 +143,24 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/query/allAttributes</code></dt>
     <dd>
-    Queries a database for all attributes of a specific key in every object. If an object does not have an attribute of the passed key, the object is skipped. The query returns a list of all the attributes keyed by object id.
+    Queries a collection for all attributes of a specific key in every object. If an object does not have an attribute of the passed key, the object is skipped. The query returns a list of all the attributes keyed by object id.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the database you're querying
+            <li>q - The name of the collection you're querying
             <li>a - the name of the attributes you're querying
+        </ul>
+    </dd>
+</dl>
+<dl>
+    <dt><code>__/query/newId</code></dt>
+    <dd>
+    Checks if an object of the given id exists within a collection
+    <br>
+    Query Parameters:
+        <ul>
+            <li>q - The name of the collection you're querying
+            <li>id - the id you're checking
         </ul>
     </dd>
 </dl>
@@ -158,11 +170,11 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/add</code></dt>
     <dd>
-    Adds a new empty object to a database by id.
+    Adds a new empty object to a collection by id.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the database you're adding to
+            <li>q - The name of the collection you're adding to
             <li>id - The id of the object you're adding
         </ul>
     </dd>
@@ -170,22 +182,22 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/add/object</code></dt>
     <dd>
-        Adds a new JSON object to a database (<em>Requires an <code>DataObject</code> JSON object to be passed in the body</em>).
+        Adds a new JSON object to a collection (<em>Requires an <code>DataObject</code> JSON object to be passed in the body</em>).
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the database you're adding to
+            <li>q - The name of the collection you're adding to
         </ul>
     </dd>
 </dl>
 <dl>
     <dt><code>__/add/attribute</code></dt>
     <dd>
-    Adds an attribute to an object in a database by id (<em>Requires an <code>AttributeContainer</code> JSON object to be passed in the body</em>).
+    Adds an attribute to an object in a collection by id (<em>Requires an <code>AttributeContainer</code> JSON object to be passed in the body</em>).
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the database you're object is in
+            <li>q - The name of the collection you're object is in
             <li>id - The id of the object you're adding to
             <li>a - The name of the attribute you're adding
         </ul>
@@ -194,11 +206,11 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/mod/object</code></dt>
     <dd>
-    Modifies the id of an object in a database by id.
+    Modifies the id of an object in a collection by id.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the database the object is in
+            <li>q - The name of the collection the object is in
             <li>id - The id of the object you're modifying
             <li>v - The new id of the object you're modifying
         </ul>
@@ -207,11 +219,11 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/mod/attribute</code></dt>
     <dd>
-    Modifies an attribute of an object in a database by id (<em>Requires an <code>AttributeContainer</code> JSON object to be passed in the body</em>).
+    Modifies an attribute of an object in a collection by id (<em>Requires an <code>AttributeContainer</code> JSON object to be passed in the body</em>).
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the database the object is in
+            <li>q - The name of the collection the object is in
             <li>id - The id of the object you're modifying
             <li>a - The name of the attribute you're modifying
         </ul>
@@ -223,11 +235,11 @@ jServ's API is built around a system of specific requests and query parameters.
 <dl>
     <dt><code>__/delete/object</code></dt>
     <dd>
-    Deletes an object from a database by id.
+    Deletes an object from a collection by id.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the database you're deleting from
+            <li>q - The name of the collection you're deleting from
             <li>id - The id of the object you're deleting
         </ul>
     </dd>
@@ -239,7 +251,7 @@ jServ's API is built around a system of specific requests and query parameters.
     <br>
     Query Parameters:
         <ul>
-            <li>q - The name of the database you're deleting from
+            <li>q - The name of the collection you're deleting from
             <li>id - The id of the object you're deleting
             <li>a - The name of the attribute you're deleting
         </ul>
