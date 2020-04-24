@@ -124,6 +124,25 @@ void handleGet(HttpRequest r) {
       print(end);
     }
   }
+  if (path == "/query/allAttributes") {
+    print("All attributes query from ${r.connectionInfo.remoteAddress}");
+    String query = r.uri.queryParameters["q"];
+    String att = r.uri.queryParameters["a"];
+    print("Queried $query for attributes $att");
+    if (dbs.any((Collection value) => value.name == query)) {
+      Collection c = dbs.singleWhere((col) => col.name == query);
+      List<Map<String, dynamic>> atts = new List<Map<String, dynamic>>();
+      print("Got here");
+      c.dataList.forEach((DataObject d){
+        if(d.data.containsKey(att)){
+          AttributeContainer atc = new AttributeContainer(att, d.data[att]);
+          atts.add({d.id.toString() : atc.value});
+        }
+      });
+      end = json.encode(atts);
+      print(end);
+    }
+  }
 
   var response = r.response;
   response.write(end);
