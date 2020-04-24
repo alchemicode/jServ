@@ -141,7 +141,7 @@ jServ's API is built around a system of specific requests and query parameters.
     </dd>
 </dl>
 <dl>
-    <dt><code>__/query/allAttribute</code></dt>
+    <dt><code>__/query/allAttributes</code></dt>
     <dd>
     Queries a database for all attributes of a specific key in every object. If an object does not have an attribute of the passed key, the object is skipped. The query returns a list of all the attributes keyed by object id.
     <br>
