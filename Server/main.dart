@@ -185,25 +185,20 @@ void handleGet(HttpRequest r) {
   } else if (path == "/query/newId") {
     print("New ID query from ${r.connectionInfo.remoteAddress}");
     String query = r.uri.queryParameters["q"];
-    int id = int.parse(r.uri.queryParameters["id"]);
-    print("Queried $query for new id $id");
+    print("Queried $query for new id ");
     if (dbs.any((Collection value) => value.name == query)) {
       Collection c = dbs.singleWhere((col) => col.name == query);
-      DataObject data =
-          c.dataList.singleWhere((d) => d.id == id, orElse: () => null);
-      if (data == null) {
-        String end = json.encode(true);
-        var response = r.response;
-        response.write(end);
-        response.close();
-        print(end);
-      } else {
-        String end = "Object $id is not available in $query";
-        var response = r.response;
-        response.write(end);
-        response.close();
-        print(end);
-      }
+      int maxId = 0;
+      c.dataList.forEach((DataObject d){
+        if(d.id > maxId){
+          maxId = d.id;
+        }
+      });
+      String end = json.encode(maxId+1);
+      print(end);
+      var response = r.response;
+      response.write(end);
+      response.close();
     } else {
       String end = "Could not find collection $query";
       print(end);
