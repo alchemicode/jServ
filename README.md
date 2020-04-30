@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/badge/license-Apache%202.0-green?style=flat-square">
     <img src="https://img.shields.io/github/manifest-json/v/kketg/jServ?style=flat-square">
     <img src="https://img.shields.io/badge/Build-Functional-orange?style=flat-square">
-    <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20OS%20X%20%7C%20Linux-brightgreen?style=flat-square">
+    <img src="https://img.shields.io/badge/Platforms-Linux-brightgreen?style=flat-square">
     <a href="https://documenter.getpostman.com/view/11039353/Szf82TeK">
         <img src="https://img.shields.io/badge/Postman-API_Ready-orange?style=flat-square&logo=postman">
     </a>
