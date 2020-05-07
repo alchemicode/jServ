@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/badge/license-Apache%202.0-green?style=flat-square">
     <img src="https://img.shields.io/github/manifest-json/v/kketg/jServ?style=flat-square">
     <img src="https://img.shields.io/badge/Build-Functional-orange?style=flat-square">
-    <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20OS%20X%20%7C%20Linux-brightgreen?style=flat-square">
+    <img src="https://img.shields.io/badge/Platforms-Linux-brightgreen?style=flat-square">
     <a href="https://documenter.getpostman.com/view/11039353/Szf82TeK">
         <img src="https://img.shields.io/badge/Postman-API_Ready-orange?style=flat-square&logo=postman">
     </a>
@@ -256,5 +256,9 @@ jServ's API is built around a system of specific requests and query parameters.
         </ul>
     </dd>
 </dl>
-
-
+<br>
+<h2 align="center">License and Copyright Notice</h2>
+<p align="center">
+    Copyright (c) 2019, Kristofer Ter-Gabrielyan. All Rights Reserved. 
+    Permission to modify and redistribute is granted under the terms of the Apache 2.0.
+</p>
