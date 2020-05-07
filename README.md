@@ -60,7 +60,7 @@ There will also be a directory called <code>Databases</code>, with a <code>db.js
 Before you execute the program for the first time, you should check in your config and data files.
 
 The <code>config.json</code> file should look something like this:
-<code>
+```json
 {
     "ip":"localhost", 
     "port":4040, 
@@ -74,15 +74,15 @@ The <code>config.json</code> file should look something like this:
         "OPTIONS":false
     }
 }
-</code>
+```
 
 Change the IP and port to whatever you desire. The requests list determines which requests the program will accept. For now, you can leave this alone.
 
 The <code>data.jserv</code> file should look like this:
-<code>
+```
 New App
 new
-</code>
+```
 
 Replace <code>New App</code> with the name of the application you are using jServ to develop.
 DO NOT edit the <code>new</code> line, as that is where the program will generate the API key.
