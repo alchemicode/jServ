@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/badge/license-Apache%202.0-green?style=flat-square">
     <img src="https://img.shields.io/github/manifest-json/v/kketg/jServ?style=flat-square">
     <img src="https://img.shields.io/badge/Build-Functional-orange?style=flat-square">
-    <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20OS%20X%20%7C%20Linux-brightgreen?style=flat-square">
+    <img src="https://img.shields.io/badge/Platforms-Linux-brightgreen?style=flat-square">
     <a href="https://documenter.getpostman.com/view/11039353/Szf82TeK">
         <img src="https://img.shields.io/badge/Postman-API_Ready-orange?style=flat-square&logo=postman">
     </a>
@@ -52,6 +52,44 @@
     </tr>
 </table>
 <br><br>
+
+<h2>Getting Started</h2>
+To set up jServ, download the latest release, and unzip it into a folder. You'll find the executable, a <code>config.json</code> file, a <code>version.jserv</code> file, and a <code>data.jserv</code> file. 
+There will also be a directory called <code>Databases</code>, with a <code>db.json</code> given to get started. To add a collection to the program, simply add a json file of any name, and add <code>[]</code> to the first line, and the program will read it.
+
+Before you execute the program for the first time, you should check in your config and data files.
+
+The <code>config.json</code> file should look something like this:
+```json
+{
+    "ip":"localhost", 
+    "port":4040, 
+    "Requests": {
+        "GET":true,
+        "POST":true,
+        "PUT":false,
+        "HEAD":true,
+        "DELETE":true,
+        "PATCH":false,
+        "OPTIONS":false
+    }
+}
+```
+
+Change the IP and port to whatever you desire. The requests list determines which requests the program will accept. For now, you can leave this alone.
+
+The <code>data.jserv</code> file should look like this:
+```
+New App
+new
+```
+
+Replace <code>New App</code> with the name of the application you are using jServ to develop.
+DO NOT edit the <code>new</code> line, as that is where the program will generate the API key.
+
+When you run the program, an API key will generate in the <code>data.jserv</code> file.
+The program will reject any requests that do not have this key in the <code>"x-api-key"</code> header.
+
 
 <h2>Program Reference</h2>
 
