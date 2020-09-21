@@ -600,7 +600,7 @@ void GenerateApiKey() async {
 
 Future<void> startSequence() async {
   GenerateApiKey();
-  String version = await File("version.jserv").readAsString();
+  String version = "0.1.1";
   List<String> data = await File("data.jserv").readAsLines();
   String implementation = data.elementAt(0);
   apiKey = data.elementAt(1);
