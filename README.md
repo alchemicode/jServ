@@ -54,7 +54,7 @@
 <br><br>
 
 <h2>Getting Started</h2>
-To set up jServ, download the latest release, and unzip it into a folder. You'll find the executable, a <code>config.json</code> file, a <code>version.jserv</code> file, a <code>keys.jserv file, and a <code>data.jserv</code> file. 
+To set up jServ, download the latest release, and unzip it into a folder. You'll find the executable, a <code>config.json</code> file, a <code>version.jserv</code> file, a <code>keys.jserv</code> file, and a <code>data.jserv</code> file. 
 There will also be a directory called <code>Databases</code>, with a <code>db.json</code> given to get started. To add a collection to the program, simply add a json file of any name, and add <code>[]</code> to the first line, and the program will read it.
 
 Before you execute the program for the first time, you should check in your config and data files.
