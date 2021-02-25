@@ -19,7 +19,11 @@ jobs:
           sudo apt update
           sudo apt install dart -y
       - name: Build
-        run: cd Server && pub get && PATH=$PATH:/usr/lib/dart/bin dart compile exe main.dart -o jserv
+        run: |
+          cd Server
+          export PATH=$PATH:/usr/lib/dart/bin
+          pub get
+          dart compile exe main.dart -o jserv
       - name: Make tarball
         run: |
           mkdir release
