@@ -92,19 +92,19 @@ The <code>config.json</code> file should look something like this:
 
 Change the IP and port to whatever you desire. The requests list determines which requests the program will accept. For now, you can leave this alone.
 
-The <code>keys.jserv</code> file will be empty. Do not manually add anything to the file.
+The `keys.jserv` file will be empty. Do not manually add anything to the file.
 
-The <code>data.jserv</code> file should look like this:
+The `data.jserv` file should look like this:
 ```
 New App
 new
 ```
 
-Replace <code>New App</code> with the name of the application you are using jServ to develop.
-DO NOT edit the <code>new</code> line, as that is where the program will generate the API key.
+Replace `New App` with the name of the application you are using jServ to develop.
+DO NOT edit the `new` line, as that is where the program will generate the API key.
 
-When you run the program, an Admin API key will generate in the <code>data.jserv</code> file, and a User API key will generate in the <code>keys.jserv</code> file.
-The program will reject any requests that do not have these keys in the <code>"x-api-key"</code> header.
+When you run the program, an Admin API key will generate in the `<code>`data.jserv`</code>` file, and a User API key will generate in the `keys.jserv` file.
+The program will reject any requests that do not have these keys in the `<code>`"x-api-key"`</code>` header.
 
 
 <h2>Program Reference</h2>
