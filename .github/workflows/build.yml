@@ -3,7 +3,7 @@ name: Build jServ Release
 on:
   push:
     tags:
-      - '*.*.*'
+      - '*.*'
 
 jobs:
   Build:
@@ -13,10 +13,16 @@ jobs:
         uses: actions/checkout@v2
       - name: Show directory
         run: ls
-      - name: Get build requirements & source
-        run: sudo apt install dart -y
+      - name: Get Dart
+        run: |
+          sudo apt update
+          sudo apt install apt-transport-https -y
+          sudo sh -c 'curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -'
+          sudo sh -c 'curl https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'
+          sudo apt update
+          sudo apt install dart -y
       - name: Build
-        run: cd Server && dart compile exe main.dart -o jserv
+        run: cd Server && PATH=$PATH:/usr/lib/dart/bin dart compile exe main.dart -o jserv
       - name: Make tarball
         run: |
           mkdir release
