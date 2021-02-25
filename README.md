@@ -30,7 +30,7 @@
             Adapt the server's API and workflow to your project
         </th>
         <th align="center">
-            Multiplatform, Simple, and easy to use
+            Multiplatform, Simple, well-documented and easy to use
         </th>
     </tr>
     <tr>
