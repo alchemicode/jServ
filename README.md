@@ -27,14 +27,11 @@
             Build your backend fast, no strings attached
         </th> 
         <th align="center">
-            Adapt the server's workflow to your project
+            Adapt the server's API and workflow to your project
         </th>
         <th align="center">
             Multiplatform, Simple, and easy to use
         </th>
-        <th align="center">
-            Use the built in API to run your apps
-        </th>  
     </tr>
     <tr>
         <td align="center">
@@ -45,9 +42,6 @@
         </td>
         <td align="center">
             jServ's driving force is it's use of JSON in it's data structure, allowing for a practical and effortless experience.<br>
-        </td>
-        <td align="center">
-            jServ's API has been specifically designed to be versatile and adaptable to your needs.<br>
         </td>
     </tr>
 </table>
