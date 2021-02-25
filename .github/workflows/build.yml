@@ -1,6 +1,9 @@
 name: Build jServ Release
 
-on: [push]
+on:
+  push:
+    branches:
+      - Dart
 
 jobs:
   Build:
