@@ -1,9 +1,6 @@
 name: Build jServ Release
 
-on:
-  push:
-    tags:
-      - '*.*'
+on: [push]
 
 jobs:
   Build:
@@ -32,9 +29,9 @@ jobs:
           cp Server/*.jserv release/.
           tar -czvf jserv.tar.gz Server/release
           rm -rf Server/release
-      - name: Release output files
-        uses: softprops/action-gh-release@v1
+      - name: Push tarball as artifact
+        uses: actions/upload-artifact@v2
         with:
-          files: jserv.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: linux-release
+          path: jserv.tar.gz
+          retention-days: 5
