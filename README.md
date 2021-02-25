@@ -97,8 +97,8 @@ new
 Replace `New App` with the name of the application you are using jServ to develop.
 DO NOT edit the `new` line, as that is where the program will generate the API key.
 
-When you run the program, an Admin API key will generate in the `<code>`data.jserv`</code>` file, and a User API key will generate in the `keys.jserv` file.
-The program will reject any requests that do not have these keys in the `<code>`"x-api-key"`</code>` header.
+When you run the program, an Admin API key will generate in the `data.jserv` file, and a User API key will generate in the `keys.jserv` file.
+The program will reject any requests that do not have these keys in the `"x-api-key"` header.
 
 
 <h2>Program Reference</h2>
