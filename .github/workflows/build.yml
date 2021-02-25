@@ -1,0 +1,34 @@
+name: Build jServ Release
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  Build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Get repo
+        uses: actions/checkout@v2
+      - name: Show directory
+        run: ls
+      - name: Get build requirements & source
+        run: sudo apt install dart -y
+      - name: Build
+        run: cd Server && dart compile exe main.dart -o jserv
+      - name: Make tarball
+        run: |
+          mkdir release
+          mv Server/jserv release/.
+          cp -rv Server/Databases release/.
+          cp Server/config.json release/.
+          cp Server/*.jserv release/.
+          tar -czvf jserv.tar.gz Server/release
+          rm -rf Server/release
+      - name: Release output files
+        uses: softprops/action-gh-release@v1
+        with:
+          files: jserv.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
