@@ -824,7 +824,6 @@ Future<void> startSequence() async {
       print(s);
       userApiKeys.add(s);
     }
-    userApiKeys.add(data2.elementAt(0));
     print(" * jServ v$version implemented for $implementation");
     print(
         " * Admin API Key for this instance of jServ is $adminApiKey. Please put this key in the headers of your requests");
