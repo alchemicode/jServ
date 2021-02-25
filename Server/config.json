@@ -1,1 +1,1 @@
-{"ip":"localhost", "port":4040, "Requests": {"GET":true,"POST":true,"PUT":false,"HEAD":true,"DELETE":true,"PATCH":false,"OPTIONS":false}}
+{ "ip": "localhost", "port": 4040, "Requests": { "GET": true, "POST": true, "PUT": false, "HEAD": true, "DELETE": true, "PATCH": false, "OPTIONS": false }, "Permissions": { "QObject": "user", "QAttribute": "user", "QAllAttributes": "user", "QByAttribute": "user", "QnewId": "admin", "AEmpty": "user", "AObject": "user", "AAttribute": "user", "MObject": "user", "MAttribute": "user", "DObject": "user", "DAttribute": "user" } }
