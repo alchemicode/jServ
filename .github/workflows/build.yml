@@ -24,18 +24,13 @@ jobs:
           export PATH=$PATH:/usr/lib/dart/bin
           pub get
           dart compile exe main.dart -o jserv
-      - name: Make tarball
-        run: |
-          mkdir release
-          mv Server/jserv release/.
-          cp -rv Server/Databases release/.
-          cp Server/config.json release/.
-          cp Server/*.jserv release/.
-          tar -czvf jserv.tar.gz release
-          rm -rf Server/release
       - name: Push tarball as artifact
         uses: actions/upload-artifact@v2
         with:
           name: linux-release
-          path: jserv.tar.gz
+          path: |
+            Server/jserv
+            Server/Databases
+            Server/config.json
+            Server/*.jserv
           retention-days: 5
