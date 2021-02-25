@@ -20,7 +20,7 @@ String ip = "localhost";
 InternetAddress ipAddress;
 int port = 4040;
 List<Collection> dbs = new List<Collection>();
-String apiKey;
+String adminApiKey;
 
 Future main() async {
   bool running = true;
@@ -36,13 +36,7 @@ Future main() async {
       String m = request.method;
       if (requestTypes[m]) {
         print("\n");
-        if (request.headers.value("x-api-key") == apiKey) {
-          handleRequest(request);
-        } else {
-          print(
-              "Error: Unauthorized request from ${request.connectionInfo.remoteAddress}");
-          request.response.write("Error: Unauthorized request");
-        }
+        handleRequest(request, request.headers.value("x-api-key"));
       } else {
         print(
             "Error: Invalid Request from ${request.connectionInfo.remoteAddress}");
@@ -60,43 +54,43 @@ bool parseBool(String b) {
   }
 }
 
-void handleRequest(HttpRequest r) {
+void handleRequest(HttpRequest r, key) {
   String m = r.method;
   try {
     switch (m) {
       case ("GET"):
         {
-          handleGet(r);
+          handleGet(r, key);
         }
         break;
       case ("POST"):
         {
-          handlePost(r);
+          handlePost(r, key);
         }
         break;
       case ("PUT"):
         {
-          handlePost(r);
+          handlePost(r, key);
         }
         break;
       case ("HEAD"):
         {
-          handlePost(r);
+          handlePost(r, key);
         }
         break;
       case ("DELETE"):
         {
-          handleDelete(r);
+          handleDelete(r, key);
         }
         break;
       case ("PATCH"):
         {
-          handlePost(r);
+          handlePost(r, key);
         }
         break;
       case ("OPTIONS"):
         {
-          handlePost(r);
+          handlePost(r, key);
         }
         break;
     }
@@ -105,7 +99,7 @@ void handleRequest(HttpRequest r) {
   }
 }
 
-void handleGet(HttpRequest r) {
+void handleGet(HttpRequest r, String key) {
   String path = r.uri.path;
   switch (path) {
     case ("/query"):
@@ -243,7 +237,7 @@ void handleGet(HttpRequest r) {
   }
 }
 
-void handlePost(HttpRequest r) {
+void handlePost(HttpRequest r, String key) {
   String path = r.uri.path;
   switch (path) {
     case ("/add"):
@@ -357,37 +351,45 @@ void handlePost(HttpRequest r) {
       break;
     case ("/mod/object"):
       {
-        print("Object mod request from ${r.connectionInfo.remoteAddress}");
-        String mod = r.uri.queryParameters["q"];
-        int id = int.parse(r.uri.queryParameters["id"]);
-        int newId = int.parse(r.uri.queryParameters["v"]);
-        print("Requested to change $id to $newId in $mod");
-        if (dbs.any((Collection value) => value.name == mod)) {
-          Collection c = dbs.singleWhere((col) => col.name == mod);
-          DataObject data =
+        if (key == adminApiKey) {
+          print("Object mod request from ${r.connectionInfo.remoteAddress}");
+          String mod = r.uri.queryParameters["q"];
+          int id = int.parse(r.uri.queryParameters["id"]);
+          int newId = int.parse(r.uri.queryParameters["v"]);
+          print("Requested to change $id to $newId in $mod");
+          if (dbs.any((Collection value) => value.name == mod)) {
+            Collection c = dbs.singleWhere((col) => col.name == mod);
+            DataObject data =
               c.dataList.singleWhere((d) => d.id == id, orElse: () => null);
-          if (data != null) {
-            data.id = newId;
-            c.updateFile();
-            String end = "Successfully modified $id to $newId";
-            print(end);
-            var response = r.response;
-            response.write(end);
-            response.close();
+            if (data != null) {
+              data.id = newId;
+              c.updateFile();
+              String end = "Successfully modified $id to $newId";
+              print(end);
+              var response = r.response;
+              response.write(end);
+              response.close();
+            } else {
+              String end = "Could not find Object $id in $mod";
+              print(end);
+              var response = r.response;
+              response.write(end);
+              response.close();
+            }
           } else {
-            String end = "Could not find Object $id in $mod";
+            String end = "Could not find collection $mod";
             print(end);
             var response = r.response;
             response.write(end);
             response.close();
           }
         } else {
-          String end = "Could not find collection $mod";
-          print(end);
-          var response = r.response;
-          response.write(end);
-          response.close();
+          print(
+              "Error: Unauthorized request from ${r.connectionInfo.remoteAddress}");
+              var response = r.response;
+              response.write("Error: Unauthorized request");
         }
+        
       }
       break;
     case ("/mod/attribute"):
@@ -451,9 +453,9 @@ void handlePost(HttpRequest r) {
   }
 }
 
-void handlePut(HttpRequest r) {}
-void handleHead(HttpRequest r) {}
-void handleDelete(HttpRequest r) {
+void handlePut(HttpRequest r, String key) {}
+void handleHead(HttpRequest r, String key) {}
+void handleDelete(HttpRequest r, String key) {
   String path = r.uri.path;
   switch (path) {
     case ("/delete/object"):
@@ -546,8 +548,8 @@ void handleDelete(HttpRequest r) {
   }
 }
 
-void handlePatch(HttpRequest r) {}
-void handleOptions(HttpRequest r) {
+void handlePatch(HttpRequest r, String key) {}
+void handleOptions(HttpRequest r, String key) {
   String m = r.method;
   r.response.write("this is a $m");
 }
@@ -583,7 +585,7 @@ void createIP() {
   }
 }
 
-void GenerateApiKey() async {
+Future<bool> GenerateApiKey() async {
   File file = new File("data.jserv");
   List<String> data = await file.readAsLines();
   if (data.length > 1) {
@@ -594,26 +596,40 @@ void GenerateApiKey() async {
       });
       String keyString = new String.fromCharCodes(keyList);
       file.writeAsString(data.elementAt(0) + "\n" + keyString);
+      return true;
+    }else{
+      return true;
     }
+  }else{
+    print("Failed to detect API Key. Type \"new\" on the second line of data.jserv to generate an Admin API Key.");
+    return false;
   }
 }
 
 Future<void> startSequence() async {
-  GenerateApiKey();
-  String version = "0.1.1";
-  List<String> data = await File("data.jserv").readAsLines();
-  String implementation = data.elementAt(0);
-  apiKey = data.elementAt(1);
   print(" * Starting...");
-  print(" * jServ v$version implemented for $implementation");
-  print(
-      " * API Key for this instance of jServ is $apiKey. Please put this key in the headers of your requests");
-  print(" -----------------------");
-  await readDatabases();
-  print(" * Loading databases...");
-  await readConfig();
-  print(" * Loading config...");
-  await createIP();
-  print(" * Binding server...");
-  print(" * Done!");
+  if(await GenerateApiKey() == false){
+    print("API Key failure. \nPress enter to exit...");
+    stdin.readLineSync();
+    exit(0);
+  }else{
+    String version = "0.1.1";
+    List<String> data = await File("data.jserv").readAsLines();
+    String implementation = data.elementAt(0);
+    adminApiKey = data.elementAt(1);
+    print(" * jServ v$version implemented for $implementation");
+    print(
+        " * Admin API Key for this instance of jServ is $adminApiKey. Please put this key in the headers of your requests");
+    print(" -----------------------");
+    await readDatabases();
+    print(" * Loading databases...");
+    await readConfig();
+    print(" * Loading config...");
+    await createIP();
+    print(" * Binding server...");
+    print(" * Done!");
+  }
+  
+
+  
 }
