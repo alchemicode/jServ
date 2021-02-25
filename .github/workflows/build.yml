@@ -1,0 +1,39 @@
+name: Build jServ Release
+
+on:
+  push:
+    branches:
+      - Dart
+
+jobs:
+  Build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Get repo
+        uses: actions/checkout@v2
+      - name: Show directory
+        run: ls
+      - name: Get Dart
+        run: |
+          sudo apt update
+          sudo apt install apt-transport-https -y
+          sudo sh -c 'curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -'
+          sudo sh -c 'curl https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'
+          sudo apt update
+          sudo apt install dart -y
+      - name: Build
+        run: |
+          cd Server
+          export PATH=$PATH:/usr/lib/dart/bin
+          pub get
+          dart compile exe main.dart -o jserv
+      - name: Push tarball as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-release
+          path: |
+            Server/jserv
+            Server/Databases
+            Server/config.json
+            Server/*.jserv
+          retention-days: 5
