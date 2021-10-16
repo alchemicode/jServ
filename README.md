@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="Media/icon.png" width="256px" height="256px">
+    <img src="https://kketg.me/images/jservicon.png" width="256px" height="256px">
 </p>
 
 <h1 align="center">
