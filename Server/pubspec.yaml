@@ -1,7 +1,0 @@
-name: jServ
-description: A flexible database server
-version: 0.1.2
-environment:
-  sdk: '>=2.6.1'
-dependencies:
-  path: ^1.7.0

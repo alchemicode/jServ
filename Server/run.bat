@@ -1,2 +1,0 @@
-dart main.dart
-PAUSE
