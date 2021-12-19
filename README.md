@@ -6,6 +6,10 @@
     jServ
 </h1>
 
+<h3 align="center">
+    A project by kketg & SomethingGeneric  
+</h3>
+
 <p align="center">
     <img src="https://img.shields.io/badge/license-Apache%202.0-green?style=flat-square">
     <img src="https://img.shields.io/github/manifest-json/v/kketg/jServ?style=flat-square">
@@ -16,15 +20,13 @@
     </a>
 </p>
 
-<h4 align="center">
-    A project by kketg & SomethingGeneric  
-</h4>
+<hr>
 
-
-<h3 align="center">
+<h2 align="center">
     A flexible database server
-</h3>
-<br><br>
+</h2>
+
+<br>
 <table border="0">
     <tr>
         <th align="center">
@@ -145,7 +147,7 @@ Some of the requests require a single value to be passed in to the request body 
 ```json
 {
     "name": "some-string",
-    "dataList": [
+    "data-list": [
         {
         "id": 0,
         "data": {"some-key": "some-value"}
