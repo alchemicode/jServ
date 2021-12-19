@@ -26,9 +26,7 @@ func (c *Collection) ReadFile() {
 	ch := make(chan bool)
 	go c.readFile(ch)
 	result := <-ch
-	if result {
-		fmt.Println("Succeeded to read database: " + c.name + ".json")
-	} else {
+	if !result {
 		fmt.Println("Failed to read database: " + c.name + ".json")
 	}
 }
