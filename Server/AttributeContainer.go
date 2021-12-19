@@ -1,16 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 )
 
 type AttributeContainer struct {
-	key string
+	key   string
 	value interface{}
-	m map[string]interface{}
+	m     map[string]interface{}
 }
 
+//Default Constructor
 func (ac *AttributeContainer) New(key string, value interface{}) {
 	ac.m = make(map[string]interface{})
 	ac.key = key
@@ -18,12 +19,13 @@ func (ac *AttributeContainer) New(key string, value interface{}) {
 	ac.m[key] = value
 }
 
-func (ac AttributeContainer) ToJson() string{
+//Converts the container to Json text
+func (ac AttributeContainer) ToJson() string {
 	js, _ := json.Marshal(ac.m)
-    return string(js)
+	return string(js)
 }
 
-
-func (ac AttributeContainer) String() string{
+//Converts the container to a string
+func (ac AttributeContainer) String() string {
 	return fmt.Sprintf("{ \" %s \" : %v  }", ac.key, ac.value)
 }
