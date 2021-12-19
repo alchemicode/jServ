@@ -16,6 +16,10 @@
     </a>
 </p>
 
+<h4 align="center">
+    A project by kketg & SomethingGeneric  
+</h4>
+
 
 <h3 align="center">
     A flexible database server
