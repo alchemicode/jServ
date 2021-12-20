@@ -27,3 +27,6 @@ Databases/*
 
 # Testing files
 test_main.go
+
+#jServ files
+*.jserv
