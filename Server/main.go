@@ -6,7 +6,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
+	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/google/uuid"
@@ -264,9 +267,189 @@ func StartSequence() {
 		os.Exit(1)
 	}
 	fmt.Printf(" * Running jServ v%s for %s\n", version, appname)
-	fmt.Printf(" * Starting server on %s:%d\n", ip, port)
 }
+
+func contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+	return false
+}
+
+func FindCollection(c []*Collection, name string) *Collection {
+	for _, v := range c {
+		if v.name == name {
+			return v
+		}
+	}
+	return nil
+}
+
+func FindDataObject(c *Collection, id int) *DataObject {
+	for _, v := range c.list {
+		if v.Id == id {
+			return &v
+		}
+	}
+	return nil
+}
+
+func FindDataObjects(c *Collection, att string) []*DataObject {
+	data := make([]*DataObject, 0)
+	for _, v := range c.list {
+		for k, _ := range v.Data {
+			if k == att {
+				data = append(data, &v)
+			}
+		}
+	}
+	return data
+}
+
+func CheckApiKey(key string, permission bool) bool {
+	if !permission {
+		return contains(adminKey, key)
+	} else {
+		return (contains(userKeys, key) || contains(adminKey, key))
+	}
+}
+
+func QObject(w http.ResponseWriter, req *http.Request) {
+	var end string
+	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QObject"]) {
+		fmt.Printf("Object query from %s\n", req.RemoteAddr)
+		var db string = req.URL.Query().Get("db")
+		id, err := strconv.Atoi(req.URL.Query().Get("id"))
+		if err != nil {
+			end = " > Failed to parse id query parameter"
+		} else {
+			fmt.Printf("Queried object %d from %s\n", id, db)
+			C := FindCollection(dbs, db)
+			if C != nil {
+				data := FindDataObject(C, id)
+				if data != nil {
+					end = data.String()
+				} else {
+					end = fmt.Sprintf(" > Object %d could not be found in %s", id, db)
+				}
+			} else {
+				end = " > Could not find collection " + db
+			}
+		}
+
+	} else {
+		end = " > Unauthorized Request from " + req.RemoteAddr
+	}
+	fmt.Println(end)
+	fmt.Fprint(w, end)
+}
+
+func QAttribute(w http.ResponseWriter, req *http.Request) {
+	var end string
+	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QAttribute"]) {
+		fmt.Printf("Attribute query from %s\n", req.RemoteAddr)
+		db := req.URL.Query().Get("db")
+		id, err := strconv.Atoi(req.URL.Query().Get("id"))
+		att := req.URL.Query().Get("a")
+		if err != nil {
+			end = " > Failed to parse id query parameter"
+		} else {
+			fmt.Printf("Queried attribute %s in %d from %s\n", att, id, db)
+			C := FindCollection(dbs, db)
+			if C != nil {
+				data := FindDataObject(C, id)
+				if data != nil {
+					if val, ok := data.Data[att]; ok {
+						attribute := new(AttributeContainer)
+						attribute.New(att, val)
+						end = attribute.ToJson()
+					} else {
+						end = fmt.Sprintf(" > Object %d in %s does not contain %s", id, db, att)
+					}
+				} else {
+					end = fmt.Sprintf(" > Object %d could not be found in %s", id, db)
+				}
+			} else {
+				end = " > Could not find collection " + db
+			}
+		}
+	} else {
+		end = " > Unauthorized Request from " + req.RemoteAddr
+	}
+	fmt.Println(end)
+	fmt.Fprint(w, end)
+}
+
+func QAllAttributes(w http.ResponseWriter, req *http.Request) {
+	var end string
+	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QAllAttribute"]) {
+		fmt.Printf("All Attributes query from %s\n", req.RemoteAddr)
+		db := req.URL.Query().Get("db")
+		att := req.URL.Query().Get("a")
+		fmt.Printf("Queried objects with attribute %s from %s\n", att, db)
+		C := FindCollection(dbs, db)
+		if C != nil {
+			data := FindDataObjects(C, att)
+			endMap := make(map[int]interface{})
+			if len(data) > 0 {
+				for _, v := range data {
+					endMap[v.Id] = v.Data[att]
+				}
+				js, _ := json.Marshal(endMap)
+				end = string(js)
+			} else {
+				end = fmt.Sprintf(" > No objects with attribute %s could be found in %s", att, db)
+			}
+		} else {
+			end = " > Could not find collection " + db
+		}
+	} else {
+		end = " > Unauthorized Request from " + req.RemoteAddr
+	}
+	fmt.Println(end)
+	fmt.Fprint(w, end)
+}
+
+/*func QByAttributes(w http.ResponseWriter, req *http.Request) {
+	var end string
+	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QByAttribute"]) {
+		fmt.Printf("By Attributes query from %s\n", req.RemoteAddr)
+		db := req.URL.Query().Get("db")
+		att := req.URL.Query().Get("a")
+		//Find a way to get the attribute value from the request body
+		fmt.Printf("Queried objects with attribute %s from %s\n", att, db)
+		C := FindCollection(dbs, db)
+		if C != nil {
+			data := FindDataObjects(C, att)
+			endMap := make(map[int]interface{})
+			if len(data) > 0 {
+				for _, v := range data {
+					endMap[v.Id] = v.Data[att]
+				}
+				js, _ := json.Marshal(endMap)
+				end = string(js)
+			} else {
+				end = fmt.Sprintf(" > No objects with attribute %s could be found in %s", att, db)
+			}
+		} else {
+			end = " > Could not find collection " + db
+		}
+	} else {
+		end = " > Unauthorized Request from " + req.RemoteAddr
+	}
+	fmt.Println(end)
+	fmt.Fprint(w, end)
+}*/
 
 func main() {
 	StartSequence()
+	http.HandleFunc("/query", QObject)
+	fmt.Printf(" * Server bound to %s:%d\n", ip, port)
+	err := http.ListenAndServe(fmt.Sprintf("%s:%d", ip, port), nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
