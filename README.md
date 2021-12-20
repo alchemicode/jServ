@@ -6,21 +6,24 @@
     jServ
 </h1>
 
+<h3 align="center">
+    A project by kketg & SomethingGeneric  
+</h3>
+
 <p align="center">
     <img src="https://img.shields.io/badge/license-Apache%202.0-green?style=flat-square">
     <img src="https://img.shields.io/github/manifest-json/v/kketg/jServ?style=flat-square">
     <img src="https://img.shields.io/badge/Build-Functional-orange?style=flat-square">
     <img src="https://img.shields.io/badge/Platforms-Linux-brightgreen?style=flat-square">
-    <a href="https://documenter.getpostman.com/view/11039353/Szf82TeK">
-        <img src="https://img.shields.io/badge/Postman-API_Ready-orange?style=flat-square&logo=postman">
-    </a>
 </p>
 
+<hr>
 
-<h3 align="center">
+<h2 align="center">
     A flexible database server
-</h3>
-<br><br>
+</h2>
+
+<br>
 <table border="0">
     <tr>
         <th align="center">
@@ -141,7 +144,7 @@ Some of the requests require a single value to be passed in to the request body 
 ```json
 {
     "name": "some-string",
-    "dataList": [
+    "data-list": [
         {
         "id": 0,
         "data": {"some-key": "some-value"}
@@ -154,9 +157,6 @@ The `Collection` class exists to keep track of each database within the server. 
 
 
 <h3>API Reference</h3>
-<a href="https://documenter.getpostman.com/view/11039353/Szf82TeK">
-    Postman API Docs
-</a>
 
 jServ's API is built around a system of specific requests and query parameters.
 
