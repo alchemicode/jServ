@@ -6,20 +6,20 @@ import (
 )
 
 type DataObject struct {
-	Id   int                    `json:"id"`
+	Id   uint64                 `json:"id"`
 	Data map[string]interface{} `json:"data"`
 }
 
 //Default Constructor
 //Creates an empty Object with only an id
-func (d *DataObject) WithEmptyMap(id int) {
+func (d *DataObject) WithEmptyMap(id uint64) {
 	d.Id = id
 	d.Data = make(map[string]interface{})
 }
 
 //Map Constructor
 //Creates an Object with given id and data map
-func (d *DataObject) WithData(id int, data map[string]interface{}) {
+func (d *DataObject) WithData(id uint64, data map[string]interface{}) {
 	d.Id = id
 	d.Data = data
 }
@@ -32,7 +32,7 @@ func (d *DataObject) FromJson(s string) {
 		panic(err)
 	}
 	fmt.Println(dat["id"].(float64))
-	d.Id = int(dat["id"].(float64))
+	d.Id = uint64(dat["id"].(float64))
 	d.Data = dat["data"].(map[string]interface{})
 }
 

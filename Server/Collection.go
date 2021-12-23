@@ -52,7 +52,7 @@ func (c *Collection) readFile(ch chan bool) {
 			//and populates the collection's list
 			for i := 0; i < len(dat); i++ {
 				obj := new(DataObject)
-				obj.WithData(int(dat[i]["id"].(float64)), dat[i]["data"].(map[string]interface{}))
+				obj.WithData(uint64(dat[i]["id"].(float64)), dat[i]["data"].(map[string]interface{}))
 				c.list = append(c.list, *obj)
 			}
 			//Channel returns true if the read was successful
