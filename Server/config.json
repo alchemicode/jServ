@@ -1,4 +1,5 @@
 {   
+    "appname": "New app",
     "ip": "localhost", 
     "port": 4040, 
     "Requests": 

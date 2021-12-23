@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -79,7 +78,7 @@ func ReadConfig(ch chan bool) {
 	for key, value := range ptemp {
 		requestPermissions[key] = (value.(string) != "admin")
 	}
-	appname = ReadFileAsLines("data.jserv")[0]
+	appname = dat["appname"].(string)
 	//Channel returns true if the read is successful
 	ch <- true
 }
@@ -125,17 +124,16 @@ func ReadFileAsLines(filename string) []string {
 	return lines
 }
 
-func StringToBinary(s string) string {
-	buf := make([]byte, binary.MaxVarintLen64)
-	var res string = ""
-	for _, c := range s {
-		n := binary.PutUvarint(buf, uint64(c))
-		res += fmt.Sprintf("%x ", buf[:n])
-	}
-	fmt.Println(res)
-	return res
-}
-
+// func StringToBinary(s string) string {
+// 	buf := make([]byte, binary.MaxVarintLen64)
+// 	var res string = ""
+// 	for _, c := range s {
+// 		n := binary.PutUvarint(buf, uint64(c))
+// 		res += fmt.Sprintf("%x ", buf[:n])
+// 	}
+// 	fmt.Println(res)
+// 	return res
+// }
 // func BinaryToString(s string) string {
 // 	var bytes [][]byte = make([][]byte, len(s)/3)
 // 	j := 0
@@ -155,6 +153,7 @@ func StringToBinary(s string) string {
 // 	return res
 // }
 
+//Checksfor a 'new' keyword in the admin file and replaces it with a new uuid
 func GenerateAdminApiKey(ch chan bool) {
 	lines := ReadFileAsLines("admin.jserv")
 	if len(lines) > 0 {
@@ -173,6 +172,8 @@ func GenerateAdminApiKey(ch chan bool) {
 		ch <- false
 	}
 }
+
+//Checks for a 'new' keyword in the admin file and replaces it with a new uuid
 func GenerateUserApiKey(ch chan bool) {
 	lines := ReadFileAsLines("keys.jserv")
 	if len(lines) > 0 {
@@ -192,7 +193,9 @@ func GenerateUserApiKey(ch chan bool) {
 	}
 }
 
+//Reads all api keys from admin and keys file
 func ReadKeys(ch chan bool) {
+	//reads the lines that aren't 'new' '' or ' '
 	lines := ReadFileAsLines("admin.jserv")
 	for i := 0; i < len(lines); i++ {
 		if lines[i] != "new" && lines[i] != "" && lines[i] != " " {
@@ -208,7 +211,9 @@ func ReadKeys(ch chan bool) {
 	ch <- true
 }
 
+//Checks the validity of all the required jserv data files
 func CheckFiles() {
+	//Checks if the files exist, create them if not, and panic if there is any error
 	if _, err := os.Stat("admin.jserv"); os.IsNotExist(err) {
 		f, err := os.Create("admin.jserv")
 		if err != nil {
@@ -223,16 +228,10 @@ func CheckFiles() {
 		}
 		f.WriteString("new")
 	}
-	if _, err := os.Stat("data.jserv"); os.IsNotExist(err) {
-		f, err := os.Create("data.jserv")
-		if err != nil {
-			panic(err)
-		}
-		f.WriteString("New app")
-	}
 	version = "0.2.0"
 }
 
+//The starting sequence to perform all the necessary checks before the server starts
 func StartSequence() {
 	fmt.Println(" * Starting...")
 	CheckFiles()
@@ -269,6 +268,7 @@ func StartSequence() {
 	fmt.Printf(" * Running jServ v%s for %s\n", version, appname)
 }
 
+//Checks if a string slice contains a string
 func contains(s []string, str string) bool {
 	for _, v := range s {
 		if v == str {
@@ -278,6 +278,7 @@ func contains(s []string, str string) bool {
 	return false
 }
 
+//Checks for a collection of the given name
 func FindCollection(c []*Collection, name string) *Collection {
 	for _, v := range c {
 		if v.name == name {
@@ -287,6 +288,7 @@ func FindCollection(c []*Collection, name string) *Collection {
 	return nil
 }
 
+//Checks for an object of the given id in a collection
 func FindDataObject(c *Collection, id int) *DataObject {
 	for _, v := range c.list {
 		if v.Id == id {
@@ -296,6 +298,7 @@ func FindDataObject(c *Collection, id int) *DataObject {
 	return nil
 }
 
+//Checks for objects of a given attribute in a collection
 func FindDataObjects(c *Collection, att string) []*DataObject {
 	data := make([]*DataObject, 0)
 	for _, v := range c.list {
@@ -308,6 +311,7 @@ func FindDataObjects(c *Collection, att string) []*DataObject {
 	return data
 }
 
+//Checks if the given API key matches the permissions bool of a query type
 func CheckApiKey(key string, permission bool) bool {
 	if !permission {
 		return contains(adminKey, key)
@@ -446,10 +450,11 @@ func QAllAttributes(w http.ResponseWriter, req *http.Request) {
 func main() {
 	StartSequence()
 	http.HandleFunc("/query", QObject)
+	http.HandleFunc("/query/attribute", QAttribute)
+	http.HandleFunc("/query/allAttributes", QAllAttributes)
 	fmt.Printf(" * Server bound to %s:%d\n", ip, port)
 	err := http.ListenAndServe(fmt.Sprintf("%s:%d", ip, port), nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }
