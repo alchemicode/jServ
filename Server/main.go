@@ -238,31 +238,31 @@ func StartSequence() {
 	ch := make(chan bool)
 	go ReadConfig(ch)
 	if result := <-ch; result {
-		fmt.Println("Successfully read config")
+		fmt.Println(" * Successfully read config")
 	} else {
-		fmt.Println("Error while reading config")
+		fmt.Println(" * Error while reading config")
 		os.Exit(1)
 	}
 	go ReadDatabases(ch)
 	if result := <-ch; result {
-		fmt.Println("Successfully generated Collections")
+		fmt.Println(" * Successfully generated Collections")
 	} else {
-		fmt.Println("Error while reading databases")
+		fmt.Println(" * Error while reading databases")
 		os.Exit(1)
 	}
 	go GenerateAdminApiKey(ch)
 	if result := <-ch; !result {
-		fmt.Println("Error while reading/generating admin API Key")
+		fmt.Println(" * Error while reading/generating admin API Key")
 		os.Exit(1)
 	}
 	go GenerateUserApiKey(ch)
 	if result := <-ch; !result {
-		fmt.Println("Error while reading/generating user API Key")
+		fmt.Println(" * Error while reading/generating user API Key")
 		os.Exit(1)
 	}
 	go ReadKeys(ch)
 	if result := <-ch; !result {
-		fmt.Println("Failed to read API Keys")
+		fmt.Println(" * Failed to read API Keys")
 		os.Exit(1)
 	}
 	fmt.Printf(" * Running jServ v%s for %s\n", version, appname)
