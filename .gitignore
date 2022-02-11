@@ -30,3 +30,5 @@ test_main.go
 
 #jServ files
 *.jserv
+
+*.bat
