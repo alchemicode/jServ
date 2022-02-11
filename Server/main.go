@@ -99,7 +99,7 @@ func ReadDatabases(ch chan bool) {
 			col := new(Collection)
 			col.New(name)
 			dbs = append(dbs, col)
-			fmt.Println(" * Loaded database \"" + name + "\"")
+			fmt.Println(" * Loaded the database \"" + name + "\"")
 		}
 	}
 	//Channel returns true if the read is successful
@@ -334,7 +334,7 @@ func QObject(w http.ResponseWriter, req *http.Request) {
 			if C != nil {
 				data := FindDataObject(C, id)
 				if data != nil {
-					end = data.String()
+					end = data.ToJson()
 				} else {
 					end = fmt.Sprintf(" > Object %d could not be found in %s", id, db)
 				}
@@ -456,30 +456,23 @@ func QNewId(w http.ResponseWriter, req *http.Request) {
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QByAttribute"]) {
 		fmt.Printf("New ID query from %s\n", req.RemoteAddr)
 		db := req.URL.Query().Get("db")
-		var attData map[string]interface{}
-		decoder := json.NewDecoder(req.Body)
-		decoder.DisallowUnknownFields()
-		err := decoder.Decode(&attData)
-		if err != nil {
-			end = " > Invalid JSON request body"
-		} else {
-			//Find a way to get the attribute value from the request body
-			fmt.Printf("Queried %s for new ID\n", db)
-			C := FindCollection(dbs, db)
-			if C != nil {
-				maxID := uint64(0)
-				for _, v := range C.list {
-					if v.Id > maxID {
-						maxID = v.Id
-					}
+		//Find a way to get the attribute value from the request body
+		fmt.Printf("Queried %s for new ID\n", db)
+		C := FindCollection(dbs, db)
+		if C != nil {
+			maxID := uint64(0)
+			for _, v := range C.list {
+				if v.Id > maxID {
+					maxID = v.Id
 				}
-				maxID += 1
-				js, _ := json.Marshal(maxID)
-				end = string(js)
-			} else {
-				end = " > Could not find collection " + db
 			}
+			maxID += 1
+			js, _ := json.Marshal(maxID)
+			end = string(js)
+		} else {
+			end = " > Could not find collection " + db
 		}
+
 	} else {
 		end = " > Unauthorized Request from " + req.RemoteAddr
 	}
@@ -598,16 +591,89 @@ func AAttribute(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprint(w, end)
 }
 
+func MObject(w http.ResponseWriter, req *http.Request) {
+	var end string
+	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["AEmpty"]) {
+		fmt.Printf("Modify object request from %s\n", req.RemoteAddr)
+		db := req.URL.Query().Get("db")
+		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
+		newId, err2 := strconv.ParseUint(req.URL.Query().Get("n"), 10, 64)
+		if err != nil || err2 != nil {
+			end = " > Failed to parse id query parameters"
+		} else {
+			fmt.Printf("Requested to mod object %d to %d\n", id, newId)
+			C := FindCollection(dbs, db)
+			if C != nil {
+				data := FindDataObject(C, id)
+				sameData := FindDataObject(C, newId)
+				if sameData != nil {
+					end = fmt.Sprintln(" > Object %d already exists in %s", newId, db)
+				} else if data != nil {
+					FindDataObject(C, id).Id = newId
+					C.UpdateFile()
+					end = fmt.Sprintf("Successfully modded object %d to %d", id, newId)
+				} else {
+					end = fmt.Sprintf(" > Object %d does not exist in %s", id, db)
+				}
+			} else {
+				end = " > Could not find collection " + db
+			}
+		}
+
+	} else {
+		end = " > Unauthorized Request from " + req.RemoteAddr
+	}
+	fmt.Println(end)
+	fmt.Fprint(w, end)
+}
+
+func MAttribute(w http.ResponseWriter, req *http.Request) {
+	var end string
+	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["AEmpty"]) {
+		fmt.Printf("Modify object request from %s\n", req.RemoteAddr)
+		db := req.URL.Query().Get("db")
+		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
+		newId, err2 := strconv.ParseUint(req.URL.Query().Get("n"), 10, 64)
+		if err != nil || err2 != nil {
+			end = " > Failed to parse id query parameters"
+		} else {
+			fmt.Printf("Requested to mod object %d to %d\n", id, newId)
+			C := FindCollection(dbs, db)
+			if C != nil {
+				data := FindDataObject(C, id)
+				sameData := FindDataObject(C, newId)
+				if sameData != nil {
+					end = fmt.Sprintln(" > Object %d already exists in %s", newId, db)
+				} else if data != nil {
+					data.Id = newId
+					C.UpdateFile()
+					end = fmt.Sprintf("Successfully modded object %d to %s", id, db)
+				} else {
+					end = fmt.Sprintf(" > Object %d does not exist in %s", id, db)
+				}
+			} else {
+				end = " > Could not find collection " + db
+			}
+		}
+
+	} else {
+		end = " > Unauthorized Request from " + req.RemoteAddr
+	}
+	fmt.Println(end)
+	fmt.Fprint(w, end)
+}
+
 func main() {
 	StartSequence()
 	http.HandleFunc("/query", QObject)
 	http.HandleFunc("/query/attribute", QAttribute)
 	http.HandleFunc("/query/allAttributes", QAllAttributes)
-	http.HandleFunc("/query/byAttributes", QByAttributes)
+	http.HandleFunc("/query/byAttribute", QByAttributes)
 	http.HandleFunc("/query/newId", QNewId)
 	http.HandleFunc("/add", AEmpty)
 	http.HandleFunc("/add/object", AObject)
 	http.HandleFunc("/add/attribute", AAttribute)
+	http.HandleFunc("/mod/object", MObject)
 	fmt.Printf(" * Server bound to %s:%d\n", ip, port)
 	err := http.ListenAndServe(fmt.Sprintf("%s:%d", ip, port), nil)
 	if err != nil {
