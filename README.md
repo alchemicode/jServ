@@ -7,7 +7,7 @@
 </h1>
 
 <h3 align="center">
-    A project by kketg & SomethingGeneric  
+    A project by codealchemi
 </h3>
 
 <p align="center">
