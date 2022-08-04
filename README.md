@@ -116,9 +116,7 @@ Each request will give a response in the form of a JSON object. It appears as th
     }
 }
 ```
-The <code>status</code> value will appear as either <code>ok</code> or <code>error</code>, and the <code>message</code> value will display a message either confirming the success, or giving an error message. The <code>data</code> value may be empty, and will only contain data if the request returns it.
-
-<br>
+The <code>status</code> value will appear as either <code>"ok"</code> or <code>"error"</code>, and the <code>message</code> value will display a message either confirming the success, or giving an error message. The <code>data</code> value may be empty, and will only contain data if the request returns it.
 
 To get set up quickly, consider using one of our libraries with methods to handle the requests.
 
