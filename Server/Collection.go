@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 type Collection struct {
@@ -33,7 +34,7 @@ func (c *Collection) ReadFile() {
 
 //Reads the collection's Json file
 func (c *Collection) readFile(ch chan bool) {
-	path := "Databases/" + c.name + ".json"
+	path := filepath.Join("Databases", c.name+".json")
 	//Reads the contents of the file as a string
 	content, err2 := os.ReadFile(path)
 	if err2 != nil {
@@ -77,7 +78,7 @@ func (c *Collection) UpdateFile() {
 }
 
 func (c *Collection) updateFile(ch chan bool) {
-	path := "Databases/" + c.name + ".json"
+	path := filepath.Join("Databases", c.name+".json")
 	//Converts the collection's list data into Json data
 	js, _ := json.Marshal(c.list)
 	//Overwrites Json file with new data

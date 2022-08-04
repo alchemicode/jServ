@@ -85,7 +85,7 @@ func ReadConfig(ch chan bool) {
 
 func ReadDatabases(ch chan bool) {
 	//Stores the files in the database directory in a list of files
-	files, err := ioutil.ReadDir("Databases/")
+	files, err := ioutil.ReadDir("Databases")
 	if err != nil {
 		//Channel returns false if there is any error
 		ch <- false
@@ -123,35 +123,6 @@ func ReadFileAsLines(filename string) []string {
 	}
 	return lines
 }
-
-// func StringToBinary(s string) string {
-// 	buf := make([]byte, binary.MaxVarintLen64)
-// 	var res string = ""
-// 	for _, c := range s {
-// 		n := binary.PutUvarint(buf, uint64(c))
-// 		res += fmt.Sprintf("%x ", buf[:n])
-// 	}
-// 	fmt.Println(res)
-// 	return res
-// }
-// func BinaryToString(s string) string {
-// 	var bytes [][]byte = make([][]byte, len(s)/3)
-// 	j := 0
-// 	for i := 0; i < len(s) && j < len(s)/3; i += 3 {
-// 		bytes[j] = []byte(s[i : i+2])
-// 		j++
-// 	}
-// 	var res string = ""
-// 	for _, b := range bytes {
-// 		str := string(b[0]) + string(b[1])
-// 		intVar, err := strconv.Atoi(str)
-// 		x, n := binary.Uvarint([]byte(str))
-// 		fmt.Sprintf("%v", n)
-// 		res += fmt.Sprintf("%s", string(x))
-// 	}
-// 	fmt.Println(res)
-// 	return res
-// }
 
 //Checksfor a 'new' keyword in the admin file and replaces it with a new uuid
 func GenerateAdminApiKey(ch chan bool) {
