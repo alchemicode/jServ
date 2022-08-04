@@ -75,6 +75,7 @@ The <code>config.json</code> file should look something like this:
     "Permissions": 
     { 
         "QObject": "user", 
+        "QAllObjects": "user",
         "QAttribute": "user", 
         "QAllAttributes": "user", 
         "QByAttribute": "user", 
@@ -184,6 +185,17 @@ jServ's API is built around a system of specific requests and query parameters.
         <ul>
             <li>db - The name of the collection you're querying</li>
             <li>id - The id of the object you're querying</li>
+        </ul>
+    </dd>
+</dl>
+<dl>
+    <dt><code>__/query/objects</code></dt>
+    <dd>
+    Queries a collection for all objects. Returns a list of objects in JSON.
+    <br>
+    Query Parameters:
+        <ul>
+            <li>db - The name of the collection you're querying</li>
         </ul>
     </dd>
 </dl>

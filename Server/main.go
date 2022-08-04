@@ -27,6 +27,7 @@ var requestTypes = map[string]bool{
 var requestPermissions = map[string]bool{
 	//False denotes that an admin API key is required to make that request
 	"QObject":        true,
+	"QAllObjects":    true,
 	"QAttribute":     true,
 	"QAllAttributes": true,
 	"QByAttribute":   true,
@@ -354,6 +355,48 @@ func QObject(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprint(w, end.ToJson())
 }
 
+func QAllObjects(w http.ResponseWriter, req *http.Request) {
+	end := Response{}
+	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QAllObjects"]) {
+		fmt.Printf("Objects query from %s\n", req.RemoteAddr)
+		//Gets necessary query parameters
+		var db string = req.URL.Query().Get("db")
+		fmt.Printf("Queried objects from %s\n", db)
+		//Gets reference to collection
+		C := FindCollection(dbs, db)
+		if C != nil {
+			//Gets reference to DataObject with specified id
+			var data []map[string]interface{}
+			for _, v := range C.List {
+				data = append(data, v.ToMap())
+			}
+			if data != nil {
+				if js, err := json.Marshal(data); err != nil {
+					end.WithoutData("error", "Failed to parse list to JSON")
+				} else {
+					//Returns DataObject as a JSON object in response
+					end.WithData("ok", fmt.Sprintf("Successfully queried objects from %s\n", db), string(js))
+				}
+			} else {
+				end.WithoutData("error", fmt.Sprintf("No objects could not be found in %s", db))
+			}
+		} else {
+			end.WithoutData("error", "Could not find collection "+db)
+		}
+
+	} else {
+		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
+	}
+	//Changes console message to add '>' prefix if it is an error message
+	if end.Status == "ok" {
+		fmt.Println(end.Message)
+	} else {
+		fmt.Println(" > " + end.Message)
+	}
+	//Writes response to http response
+	fmt.Fprint(w, end.ToJson())
+}
+
 func QAttribute(w http.ResponseWriter, req *http.Request) {
 	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QAttribute"]) {
@@ -415,7 +458,7 @@ func QAllAttributes(w http.ResponseWriter, req *http.Request) {
 			//Gets reference to DataObjects with specified attribute
 			data := FindDataObjects(C, att)
 			//Makes list for all the ids of the objects
-			list := make([]uint64, 0)
+			var list []uint64
 			if len(data) > 0 {
 				for _, v := range data {
 					//Adds all the object ids to the list
@@ -467,7 +510,7 @@ func QByAttributes(w http.ResponseWriter, req *http.Request) {
 			if C != nil {
 				//Gets reference to DataObjects with specified attribute
 				data := FindDataObjects(C, att)
-				list := make([]map[string]interface{}, 0)
+				var list []map[string]interface{}
 				if len(data) > 0 {
 					for _, v := range data {
 						list = append(list, v.ToMap())
@@ -882,6 +925,7 @@ func DAttribute(w http.ResponseWriter, req *http.Request) {
 func main() {
 	StartSequence()
 	http.HandleFunc("/query", QObject)
+	http.HandleFunc("/query/objects", QAllObjects)
 	http.HandleFunc("/query/attribute", QAttribute)
 	http.HandleFunc("/query/allAttributes", QAllAttributes)
 	http.HandleFunc("/query/byAttribute", QByAttributes)
