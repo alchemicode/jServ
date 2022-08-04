@@ -302,7 +302,6 @@ func RemoveAttribute(c *Collection, id uint64, att string) {
 					break
 				}
 			}
-
 		}
 	}
 }
@@ -317,44 +316,47 @@ func CheckApiKey(key string, permission bool) bool {
 }
 
 func QObject(w http.ResponseWriter, req *http.Request) {
-	var end string
+	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QObject"]) {
 		fmt.Printf("Object query from %s\n", req.RemoteAddr)
 		var db string = req.URL.Query().Get("db")
 		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
 		if err != nil {
-			end = " > Failed to parse id query parameter"
+			end.WithoutData("error", "Failed to parse id query parameter")
 		} else {
 			fmt.Printf("Queried object %d from %s\n", id, db)
 			C := FindCollection(dbs, db)
 			if C != nil {
 				data := FindDataObject(C, id)
 				if data != nil {
-					end = data.ToJson()
+					end.WithData("ok", fmt.Sprintf("Successfully queried object %d from %s\n", id, db), data.ToMap())
 				} else {
-					end = fmt.Sprintf(" > Object %d could not be found in %s", id, db)
+					end.WithoutData("error", fmt.Sprintf("Object %d could not be found in %s", id, db))
 				}
 			} else {
-				end = " > Could not find collection " + db
+				end.WithoutData("error", "Could not find collection "+db)
 			}
 		}
-
 	} else {
-		end = " > Unauthorized Request from " + req.RemoteAddr
+		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
-	fmt.Println(end)
-	fmt.Fprint(w, end)
+	if end.Status == "ok" {
+		fmt.Println(end.Message)
+	} else {
+		fmt.Println(" > " + end.Message)
+	}
+	fmt.Fprint(w, end.ToJson())
 }
 
 func QAttribute(w http.ResponseWriter, req *http.Request) {
-	var end string
+	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QAttribute"]) {
 		fmt.Printf("Attribute query from %s\n", req.RemoteAddr)
 		db := req.URL.Query().Get("db")
 		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
 		att := req.URL.Query().Get("a")
 		if err != nil {
-			end = " > Failed to parse id query parameter"
+			end.WithoutData("error", "Failed to parse id query parameter")
 		} else {
 			fmt.Printf("Queried attribute %s in %d from %s\n", att, id, db)
 			C := FindCollection(dbs, db)
@@ -364,26 +366,30 @@ func QAttribute(w http.ResponseWriter, req *http.Request) {
 					if val, ok := data.Data[att]; ok {
 						attribute := new(AttributeContainer)
 						attribute.New(att, val)
-						end = attribute.ToJson()
+						end.WithData("ok", fmt.Sprintf("Successfully queried object %d from %s\n", id, db), attribute.ToMap())
 					} else {
-						end = fmt.Sprintf(" > Object %d in %s does not contain %s", id, db, att)
+						end.WithoutData("error", fmt.Sprintf("Object %d in %s does not contain %s", id, db, att))
 					}
 				} else {
-					end = fmt.Sprintf(" > Object %d could not be found in %s", id, db)
+					end.WithoutData("error", fmt.Sprintf("Object %d could not be found in %s", id, db))
 				}
 			} else {
-				end = " > Could not find collection " + db
+				end.WithoutData("error", "Could not find collection "+db)
 			}
 		}
 	} else {
-		end = " > Unauthorized Request from " + req.RemoteAddr
+		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
-	fmt.Println(end)
-	fmt.Fprint(w, end)
+	if end.Status == "ok" {
+		fmt.Println(end.Message)
+	} else {
+		fmt.Println(" > " + end.Message)
+	}
+	fmt.Fprint(w, end.ToJson())
 }
 
 func QAllAttributes(w http.ResponseWriter, req *http.Request) {
-	var end string
+	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QAllAttribute"]) {
 		fmt.Printf("All Attributes query from %s\n", req.RemoteAddr)
 		db := req.URL.Query().Get("db")
@@ -392,28 +398,33 @@ func QAllAttributes(w http.ResponseWriter, req *http.Request) {
 		C := FindCollection(dbs, db)
 		if C != nil {
 			data := FindDataObjects(C, att)
-			endMap := make(map[uint64]interface{})
+			endMap := make(map[string]interface{})
+			list := make([]uint64, 0)
 			if len(data) > 0 {
 				for _, v := range data {
-					endMap[v.Id] = v.Data[att]
+					list = append(list, v.Id)
 				}
-				js, _ := json.Marshal(endMap)
-				end = string(js)
+				endMap["Objects"] = list
+				end.WithData("ok", fmt.Sprintf("Successfully queried objects with attribute %s from %s\n", att, db), endMap)
 			} else {
-				end = fmt.Sprintf(" > No objects with attribute %s could be found in %s", att, db)
+				end.WithoutData("error", fmt.Sprintf("No objects with attribute %s could be found in %s", att, db))
 			}
 		} else {
-			end = " > Could not find collection " + db
+			end.WithoutData("error", "Could not find collection "+db)
 		}
 	} else {
-		end = " > Unauthorized Request from " + req.RemoteAddr
+		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
-	fmt.Println(end)
-	fmt.Fprint(w, end)
+	if end.Status == "ok" {
+		fmt.Println(end.Message)
+	} else {
+		fmt.Println(" > " + end.Message)
+	}
+	fmt.Fprint(w, end.ToJson())
 }
 
 func QByAttributes(w http.ResponseWriter, req *http.Request) {
-	var end string
+	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QByAttribute"]) {
 		fmt.Printf("By Attributes query from %s\n", req.RemoteAddr)
 		db := req.URL.Query().Get("db")
@@ -423,32 +434,36 @@ func QByAttributes(w http.ResponseWriter, req *http.Request) {
 		decoder.DisallowUnknownFields()
 		err := decoder.Decode(&attData)
 		if err != nil {
-			end = " > Invalid JSON request body"
+			end.WithoutData("error", "Invalid JSON request body")
 		} else {
-			//Find a way to get the attribute value from the request body
 			fmt.Printf("Queried objects with attribute %s from %s\n", att, db)
 			C := FindCollection(dbs, db)
 			if C != nil {
 				data := FindDataObjects(C, att)
+				endMap := make(map[string]interface{})
 				if len(data) > 0 {
-					js, _ := json.Marshal(data)
-					end = string(js)
+					endMap["Objects"] = data
+					end.WithData("ok", fmt.Sprintf("Queried objects with attribute %s from %s\n", att, db), endMap)
 				} else {
-					end = fmt.Sprintf(" > No objects with attribute %s could be found in %s", att, db)
+					end.WithoutData("error", fmt.Sprintf("No objects with attribute %s could be found in %s", att, db))
 				}
 			} else {
-				end = " > Could not find collection " + db
+				end.WithoutData("error", "Could not find collection "+db)
 			}
 		}
 	} else {
-		end = " > Unauthorized Request from " + req.RemoteAddr
+		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
-	fmt.Println(end)
-	fmt.Fprint(w, end)
+	if end.Status == "ok" {
+		fmt.Println(end.Message)
+	} else {
+		fmt.Println(" > " + end.Message)
+	}
+	fmt.Fprint(w, end.ToJson())
 }
 
 func QNewId(w http.ResponseWriter, req *http.Request) {
-	var end string
+	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QByAttribute"]) {
 		fmt.Printf("New ID query from %s\n", req.RemoteAddr)
 		db := req.URL.Query().Get("db")
@@ -463,27 +478,31 @@ func QNewId(w http.ResponseWriter, req *http.Request) {
 				}
 			}
 			maxID += 1
-			js, _ := json.Marshal(maxID)
-			end = string(js)
+			ac := AttributeContainer{}
+			ac.New("id", maxID)
+			end.WithData("ok", fmt.Sprintf("Queried %s for new ID\n", db), ac.ToMap())
 		} else {
-			end = " > Could not find collection " + db
+			end.WithoutData("error", "Could not find collection "+db)
 		}
-
 	} else {
-		end = " > Unauthorized Request from " + req.RemoteAddr
+		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
-	fmt.Println(end)
-	fmt.Fprint(w, end)
+	if end.Status == "ok" {
+		fmt.Println(end.Message)
+	} else {
+		fmt.Println(" > " + end.Message)
+	}
+	fmt.Fprint(w, end.ToJson())
 }
 
 func AEmpty(w http.ResponseWriter, req *http.Request) {
-	var end string
+	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["AEmpty"]) {
 		fmt.Printf("Empty object add request from %s\n", req.RemoteAddr)
 		db := req.URL.Query().Get("db")
 		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
 		if err != nil {
-			end = " > Failed to parse id query parameter"
+			end.WithoutData("error", "Failed to parse id query parameter")
 		} else {
 			fmt.Printf("Requested to add object %d to %s\n", id, db)
 			C := FindCollection(dbs, db)
@@ -491,27 +510,30 @@ func AEmpty(w http.ResponseWriter, req *http.Request) {
 				data := FindDataObject(C, id)
 				if data == nil {
 					obj := DataObject{}
-					obj.WithEmptyMap(id)
+					obj.WithoutData(id)
 					C.list = append(C.list, obj)
 					C.UpdateFile()
-					end = fmt.Sprintf("Successfully added object %d to %s", id, db)
+					end.WithoutData("ok", fmt.Sprintf("Successfully added object %d to %s", id, db))
 				} else {
-					end = fmt.Sprintf(" > Object %d already exists in %s", id, db)
+					end.WithoutData("error", fmt.Sprintf("Object %d already exists in %s", id, db))
 				}
 			} else {
-				end = " > Could not find collection " + db
+				end.WithoutData("error", "Could not find collection "+db)
 			}
 		}
-
 	} else {
-		end = " > Unauthorized Request from " + req.RemoteAddr
+		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
-	fmt.Println(end)
-	fmt.Fprint(w, end)
+	if end.Status == "ok" {
+		fmt.Println(end.Message)
+	} else {
+		fmt.Println(" > " + end.Message)
+	}
+	fmt.Fprint(w, end.ToJson())
 }
 
 func AObject(w http.ResponseWriter, req *http.Request) {
-	var end string
+	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["AObject"]) {
 		fmt.Printf("Object add request from %s\n", req.RemoteAddr)
 		db := req.URL.Query().Get("db")
@@ -520,7 +542,7 @@ func AObject(w http.ResponseWriter, req *http.Request) {
 		decoder.DisallowUnknownFields()
 		err := decoder.Decode(&objData)
 		if err != nil {
-			end = " > Failed to parse Request body"
+			end.WithoutData("error", "Failed to parse Request body")
 		} else {
 			obj := DataObject{}
 			obj.WithData(uint64(objData["id"].(float64)), objData["data"].(map[string]interface{}))
@@ -531,30 +553,33 @@ func AObject(w http.ResponseWriter, req *http.Request) {
 				if data == nil {
 					C.list = append(C.list, obj)
 					C.UpdateFile()
-					end = fmt.Sprintf("Successfully added object %d to %s", obj.Id, db)
+					end.WithoutData("ok", fmt.Sprintf("Successfully added object %d to %s", obj.Id, db))
 				} else {
-					end = fmt.Sprintf(" > Object %d already exists in %s", obj.Id, db)
+					end.WithoutData("error", fmt.Sprintf(" > Object %d already exists in %s", obj.Id, db))
 				}
 			} else {
-				end = " > Could not find collection " + db
+				end.WithoutData("error", "Could not find collection "+db)
 			}
 		}
-
 	} else {
-		end = " > Unauthorized Request from " + req.RemoteAddr
+		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
-	fmt.Println(end)
-	fmt.Fprint(w, end)
+	if end.Status == "ok" {
+		fmt.Println(end.Message)
+	} else {
+		fmt.Println(" > " + end.Message)
+	}
+	fmt.Fprint(w, end.ToJson())
 }
 
 func AAttribute(w http.ResponseWriter, req *http.Request) {
-	var end string
+	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["AAttribute"]) {
 		fmt.Printf("Attribute add request from %s\n", req.RemoteAddr)
 		db := req.URL.Query().Get("db")
 		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
 		if err != nil {
-			end = " > Failed to parse id query parameter"
+			end.WithoutData("error", "Failed to parse id query parameter")
 		} else {
 			att := req.URL.Query().Get("a")
 			var attData map[string]interface{}
@@ -562,7 +587,7 @@ func AAttribute(w http.ResponseWriter, req *http.Request) {
 			decoder.DisallowUnknownFields()
 			err := decoder.Decode(&attData)
 			if err != nil {
-				end = " > Failed to parse JSON Response body"
+				end.WithoutData("error", "Failed to parse JSON Response body")
 			} else {
 				fmt.Printf("Requested to add attribute %s to object %d in %s\n", att, id, db)
 				C := FindCollection(dbs, db)
@@ -571,31 +596,35 @@ func AAttribute(w http.ResponseWriter, req *http.Request) {
 					if data != nil {
 						data.Data[att] = attData[att]
 						C.UpdateFile()
-						end = fmt.Sprintf("Successfully added attribute %s to object %d in %s", att, id, db)
+						end.WithoutData("ok", fmt.Sprintf("Successfully added attribute %s to object %d in %s", att, id, db))
 					} else {
-						end = fmt.Sprintf(" > Object %d does not exist in %s", id, db)
+						end.WithoutData("error", fmt.Sprintf("Object %d could not be found in %s", id, db))
 					}
 				} else {
-					end = " > Could not find collection " + db
+					end.WithoutData("error", "Could not find collection "+db)
 				}
 			}
 		}
 	} else {
-		end = " > Unauthorized Request from " + req.RemoteAddr
+		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
-	fmt.Println(end)
-	fmt.Fprint(w, end)
+	if end.Status == "ok" {
+		fmt.Println(end.Message)
+	} else {
+		fmt.Println(" > " + end.Message)
+	}
+	fmt.Fprint(w, end.ToJson())
 }
 
 func MObject(w http.ResponseWriter, req *http.Request) {
-	var end string
+	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["MObject"]) {
 		fmt.Printf("Modify object request from %s\n", req.RemoteAddr)
 		db := req.URL.Query().Get("db")
 		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
 		newId, err2 := strconv.ParseUint(req.URL.Query().Get("n"), 10, 64)
 		if err != nil || err2 != nil {
-			end = " > Failed to parse id query parameters"
+			end.WithoutData("error", "Failed to parse id query parameter")
 		} else {
 			fmt.Printf("Requested to mod object %d to %d\n", id, newId)
 			C := FindCollection(dbs, db)
@@ -603,34 +632,37 @@ func MObject(w http.ResponseWriter, req *http.Request) {
 				data := FindDataObject(C, id)
 				sameData := FindDataObject(C, newId)
 				if sameData != nil {
-					end = fmt.Sprintln(" > Object %d already exists in %s", newId, db)
+					end.WithoutData("error", fmt.Sprintln(" > Object %d already exists in %s", newId, db))
 				} else if data != nil {
 					FindDataObject(C, id).Id = newId
 					C.UpdateFile()
-					end = fmt.Sprintf("Successfully modded object %d to %d", id, newId)
+					end.WithoutData("error", fmt.Sprintf("Successfully modded object %d to %d", id, newId))
 				} else {
-					end = fmt.Sprintf(" > Object %d does not exist in %s", id, db)
+					end.WithoutData("error", fmt.Sprintf("Object %d could not be found in %s", id, db))
 				}
 			} else {
-				end = " > Could not find collection " + db
+				end.WithoutData("error", "Could not find collection "+db)
 			}
 		}
-
 	} else {
-		end = " > Unauthorized Request from " + req.RemoteAddr
+		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
-	fmt.Println(end)
-	fmt.Fprint(w, end)
+	if end.Status == "ok" {
+		fmt.Println(end.Message)
+	} else {
+		fmt.Println(" > " + end.Message)
+	}
+	fmt.Fprint(w, end.ToJson())
 }
 
 func MAttribute(w http.ResponseWriter, req *http.Request) {
-	var end string
+	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["MAttribute"]) {
 		fmt.Printf("Modify Attribute request from %s\n", req.RemoteAddr)
 		db := req.URL.Query().Get("db")
 		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
 		if err != nil {
-			end = " > Failed to parse id query parameters"
+			end.WithoutData("error", "Failed to parse id query parameter")
 		} else {
 			att := req.URL.Query().Get("a")
 			var attData map[string]interface{}
@@ -638,7 +670,7 @@ func MAttribute(w http.ResponseWriter, req *http.Request) {
 			decoder.DisallowUnknownFields()
 			err := decoder.Decode(&attData)
 			if err != nil {
-				end = " > Failed to parse JSON Response body"
+				end.WithoutData("error", "Failed to parse JSON Response body")
 			} else {
 				fmt.Printf("Requested to modify attribute %s in object %d in %s\n", att, id, db)
 				C := FindCollection(dbs, db)
@@ -647,30 +679,34 @@ func MAttribute(w http.ResponseWriter, req *http.Request) {
 					if data != nil {
 						data.Data[att] = attData[att]
 						C.UpdateFile()
-						end = fmt.Sprintf("Successfully modified attribute %s in object %d in %s", att, id, db)
+						end.WithoutData("ok", fmt.Sprintf("Successfully modified attribute %s in object %d in %s", att, id, db))
 					} else {
-						end = fmt.Sprintf(" > Object %d does not exist in %s", id, db)
+						end.WithoutData("error", fmt.Sprintf("Object %d could not be found in %s", id, db))
 					}
 				} else {
-					end = " > Could not find collection " + db
+					end.WithoutData("error", "Could not find collection "+db)
 				}
 			}
 		}
 	} else {
-		end = " > Unauthorized Request from " + req.RemoteAddr
+		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
-	fmt.Println(end)
-	fmt.Fprint(w, end)
+	if end.Status == "ok" {
+		fmt.Println(end.Message)
+	} else {
+		fmt.Println(" > " + end.Message)
+	}
+	fmt.Fprint(w, end.ToJson())
 }
 
 func DObject(w http.ResponseWriter, req *http.Request) {
-	var end string
+	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["DObject"]) {
 		fmt.Printf("Delete object request from %s\n", req.RemoteAddr)
 		db := req.URL.Query().Get("db")
 		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
 		if err != nil {
-			end = " > Failed to parse id query parameters"
+			end.WithoutData("error", "Failed to parse id query parameter")
 		} else {
 			fmt.Printf("Requested to delete object %d\n", id)
 			C := FindCollection(dbs, db)
@@ -679,30 +715,33 @@ func DObject(w http.ResponseWriter, req *http.Request) {
 				if data != nil {
 					RemoveDataObject(C, id)
 					C.UpdateFile()
-					end = fmt.Sprintf("Successfully deleted object %d", id)
+					end.WithoutData("ok", fmt.Sprintf("Successfully deleted object %d", id))
 				} else {
-					end = fmt.Sprintf(" > Object %d does not exist in %s", id, db)
+					end.WithoutData("error", fmt.Sprintf("Object %d could not be found in %s", id, db))
 				}
 			} else {
-				end = " > Could not find collection " + db
+				end.WithoutData("error", "Could not find collection "+db)
 			}
 		}
-
 	} else {
-		end = " > Unauthorized Request from " + req.RemoteAddr
+		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
-	fmt.Println(end)
-	fmt.Fprint(w, end)
+	if end.Status == "ok" {
+		fmt.Println(end.Message)
+	} else {
+		fmt.Println(" > " + end.Message)
+	}
+	fmt.Fprint(w, end.ToJson())
 }
 
 func DAttribute(w http.ResponseWriter, req *http.Request) {
-	var end string
+	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["DAttribute"]) {
 		fmt.Printf("Delete attribute request from %s\n", req.RemoteAddr)
 		db := req.URL.Query().Get("db")
 		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
 		if err != nil {
-			end = " > Failed to parse id query parameters"
+			end.WithoutData("error", "Failed to parse id query parameter")
 		} else {
 			att := req.URL.Query().Get("a")
 			fmt.Printf("Requested to delete attribute %s in object %d in %s\n", att, id, db)
@@ -713,25 +752,26 @@ func DAttribute(w http.ResponseWriter, req *http.Request) {
 					if data.Data[att] != nil {
 						RemoveAttribute(C, id, att)
 						C.UpdateFile()
-						end = fmt.Sprintf("Successfully modified attribute %s in object %d in %s", att, id, db)
+						end.WithoutData("ok", fmt.Sprintf("Successfully modified attribute %s in object %d in %s", att, id, db))
 					} else {
-						end = fmt.Sprintf(" > Attribute %s does not exist in %d in %s", att, id, db)
+						end.WithoutData("error", fmt.Sprintf("Attribute %s does not exist in %d in %s", att, id, db))
 					}
-
 				} else {
-					end = fmt.Sprintf(" > Object %d does not exist in %s", id, db)
+					end.WithoutData("error", fmt.Sprintf("Object %d could not be found in %s", id, db))
 				}
 			} else {
-				end = " > Could not find collection " + db
+				end.WithoutData("error", "Could not find collection "+db)
 			}
-
 		}
-
 	} else {
-		end = " > Unauthorized Request from " + req.RemoteAddr
+		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
-	fmt.Println(end)
-	fmt.Fprint(w, end)
+	if end.Status == "ok" {
+		fmt.Println(end.Message)
+	} else {
+		fmt.Println(" > " + end.Message)
+	}
+	fmt.Fprint(w, end.ToJson())
 }
 
 func main() {

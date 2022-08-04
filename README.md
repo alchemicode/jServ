@@ -105,6 +105,21 @@ The program will reject any requests that do not have these keys in the `"x-api-
 jServ relies on the use of HTTP requests. This is how data is sent back and forth between the instance and your program.
 There are several built-in request handlers that allow a variety of methods to work with your data (See below).
 
+Each request will give a response in the form of a JSON object. It appears as the following (with example values),
+```json
+{
+    "status": "ok",
+    "message": "Successfully queried some-database for some-object",
+    "data": {
+        "id": 0,
+        "data": {"some-key": "some-value"}
+    }
+}
+```
+The <code>status</code> value will appear as either <code>ok</code> or <code>error</code>, and the <code>message</code> value will display a message either confirming the success, or giving an error message. The <code>data</code> value may be empty, and will only contain data if the request returns it.
+
+<br>
+
 To get set up quickly, consider using one of our libraries with methods to handle the requests.
 
 Python - <a href="https://github.com/Codealchemi/jServ-python-lib">https://github.com/Codealchemi/jServ-python-lib</a>

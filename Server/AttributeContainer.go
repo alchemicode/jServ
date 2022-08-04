@@ -6,26 +6,30 @@ import (
 )
 
 type AttributeContainer struct {
-	key   string
-	value interface{}
-	m     map[string]interface{}
+	Key   string      `json:"key"`
+	Value interface{} `json:"value"`
 }
 
 //Default Constructor
 func (ac *AttributeContainer) New(key string, value interface{}) {
-	ac.m = make(map[string]interface{})
-	ac.key = key
-	ac.value = value
-	ac.m[key] = value
+	ac.Key = key
+	ac.Value = value
+}
+
+func (ac AttributeContainer) ToMap() map[string]interface{} {
+	m := make(map[string]interface{})
+	m["key"] = ac.Key
+	m["value"] = ac.Value
+	return m
 }
 
 //Converts the container to Json text
 func (ac AttributeContainer) ToJson() string {
-	js, _ := json.Marshal(ac.m)
+	js, _ := json.Marshal(ac.ToMap())
 	return string(js)
 }
 
 //Converts the container to a string
 func (ac AttributeContainer) String() string {
-	return fmt.Sprintf("{ \" %s \" : %v  }", ac.key, ac.value)
+	return fmt.Sprintf("{ \" %s \" : %v  }", ac.Key, ac.Value)
 }

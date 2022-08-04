@@ -12,7 +12,7 @@ type DataObject struct {
 
 //Default Constructor
 //Creates an empty Object with only an id
-func (d *DataObject) WithEmptyMap(id uint64) {
+func (d *DataObject) WithoutData(id uint64) {
 	d.Id = id
 	d.Data = make(map[string]interface{})
 }
