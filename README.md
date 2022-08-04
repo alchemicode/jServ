@@ -51,8 +51,8 @@
 <br><br>
 
 <h2>Getting Started</h2>
-To set up jServ, download the latest release, and unzip it into a folder, and run the executable. You will then have a <code>config.json</code> file, a file, a <code>keys.jserv</code> file, and an <code>admin.jserv</code> file. 
-There will also be a directory called <code>Databases</code>, with a <code>db.json</code> given to get started. To add a collection to the program, simply add a json file of any name, and add <code>[]</code> to the first line, and the program will read it.
+To set up jServ, download the latest release, and unzip it into a folder, and run the executable. You will have a <code>config.json</code> file, a <code>keys.jserv</code> file, and an <code>admin.jserv</code> file. 
+There will also be a directory called <code>Databases</code>, with an <code>example.json</code> given to get started. To add a collection to the program, simply add a json file of any name, and add <code>[]</code> to the first line, and the program will read it.
 
 Before you execute the program for the first time, you should check in your config and data files.
 
@@ -90,7 +90,7 @@ The <code>config.json</code> file should look something like this:
 }
 ```
 
-Change the IP and port to whatever you desire. The requests list determines which requests the program will accept. For now, you can leave this alone.
+Change the IP and port to whatever you need. The requests list determines which requests the program will accept. For now, you can leave this alone.
 
 The permissions list determines which requests can be made with the user keys, whereas admin keys will have access to all of them.
 
@@ -100,9 +100,14 @@ The program will reject any requests that do not have these keys in the `"x-api-
 
 <h2>Program Reference</h2>
 
+<h3>Interfacing</h3>
 
-jServ is extremely flexible. There are very few definite terms provided, as most of it depends on the implementation by the individual developer.
+jServ relies on the use of HTTP requests. This is how data is sent back and forth between the instance and your program.
+There are several built-in request handlers that allow a variety of methods to work with your data (See below).
 
+To get set up quickly, consider using one of our libraries with methods to handle the requests.
+
+Python - <a href="https://github.com/Codealchemi/jServ-python-lib">https://github.com/Codealchemi/jServ-python-lib</a>
 
 <h3>Data Structure</h3>
 
@@ -118,7 +123,7 @@ The data structure relies on three classes, `DataObject`, `AttributeContainer`, 
 }
 ```
 
-The reason the object has only two fields is that the developer defines what attributes each object will have within the `data` field. The `id` field is the only definite field to any object, as it is required for the API to be functional. It is dependent on you to implement field enforcement in your applications, and to ensure that the data fields are consistent across all objects(if this is what is desired). 
+The reason the object has only two fields is that the developer defines what attributes each object will have within the `data` field. The `id` field is the only definite field to any object, as it is required for the API to be functional. It is dependent on you to implement field enforcement in your applications, and to ensure that the data fields are consistent across all objects. 
  
 <br>
 
@@ -137,7 +142,7 @@ Some of the requests require a single value to be passed in to the request body 
 
 ```json
 {
-    "name": "some-string",
+    "name": "some-name",
     "data-list": [
         {
         "id": 0,
