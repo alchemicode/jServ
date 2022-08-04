@@ -333,7 +333,7 @@ func QObject(w http.ResponseWriter, req *http.Request) {
 				data := FindDataObject(C, id)
 				if data != nil {
 					//Returns DataObject as a JSON object in response
-					end.WithData("ok", fmt.Sprintf("Successfully queried object %d from %s\n", id, db), data.ToMap())
+					end.WithData("ok", fmt.Sprintf("Successfully queried object %d from %s\n", id, db), data.ToJson())
 				} else {
 					end.WithoutData("error", fmt.Sprintf("Object %d could not be found in %s", id, db))
 				}
@@ -377,7 +377,7 @@ func QAttribute(w http.ResponseWriter, req *http.Request) {
 						attribute := new(AttributeContainer)
 						attribute.New(att, val)
 						//Returns AttributeContainer as a JSON Object in response
-						end.WithData("ok", fmt.Sprintf("Successfully queried object %d from %s\n", id, db), attribute.ToMap())
+						end.WithData("ok", fmt.Sprintf("Successfully queried object %d from %s\n", id, db), attribute.ToJson())
 					} else {
 						end.WithoutData("error", fmt.Sprintf("Object %d in %s does not contain %s", id, db, att))
 					}
@@ -414,8 +414,6 @@ func QAllAttributes(w http.ResponseWriter, req *http.Request) {
 		if C != nil {
 			//Gets reference to DataObjects with specified attribute
 			data := FindDataObjects(C, att)
-			//Makes map to be returned in response
-			endMap := make(map[string]interface{})
 			//Makes list for all the ids of the objects
 			list := make([]uint64, 0)
 			if len(data) > 0 {
@@ -423,10 +421,12 @@ func QAllAttributes(w http.ResponseWriter, req *http.Request) {
 					//Adds all the object ids to the list
 					list = append(list, v.Id)
 				}
-				//Places list in the response map
-				endMap["Objects"] = list
-				//Returns the list of DataObject ids in the response
-				end.WithData("ok", fmt.Sprintf("Successfully queried objects with attribute %s from %s\n", att, db), endMap)
+				if js, err := json.Marshal(list); err != nil {
+					end.WithoutData("error", "Failed to parse list to JSON")
+				} else {
+					//Returns the list of DataObject ids in the response
+					end.WithData("ok", fmt.Sprintf("Successfully queried objects with attribute %s from %s\n", att, db), string(js))
+				}
 			} else {
 				end.WithoutData("error", fmt.Sprintf("No objects with attribute %s could be found in %s", att, db))
 			}
@@ -467,13 +467,18 @@ func QByAttributes(w http.ResponseWriter, req *http.Request) {
 			if C != nil {
 				//Gets reference to DataObjects with specified attribute
 				data := FindDataObjects(C, att)
-				//Makes map to be returned in response
-				endMap := make(map[string]interface{})
+				list := make([]map[string]interface{}, 0)
 				if len(data) > 0 {
-					//Adds DataObjects list to response map
-					endMap["Objects"] = data
-					//Returns list of DataObjects in the response
-					end.WithData("ok", fmt.Sprintf("Queried objects with attribute %s from %s\n", att, db), endMap)
+					for _, v := range data {
+						list = append(list, v.ToMap())
+					}
+					if js, err := json.Marshal(list); err != nil {
+						end.WithoutData("error", "Failed to parse list to JSON")
+					} else {
+						//Returns list of DataObjects in the response
+						end.WithData("ok", fmt.Sprintf("Queried objects with attribute %s from %s\n", att, db), string(js))
+					}
+
 				} else {
 					end.WithoutData("error", fmt.Sprintf("No objects with attribute %s could be found in %s", att, db))
 				}
@@ -516,7 +521,7 @@ func QNewId(w http.ResponseWriter, req *http.Request) {
 			ac := AttributeContainer{}
 			ac.New("id", maxID)
 			//Returns id AttributeContainer in response
-			end.WithData("ok", fmt.Sprintf("Queried %s for new ID\n", db), ac.ToMap())
+			end.WithData("ok", fmt.Sprintf("Queried %s for new ID\n", db), ac.ToJson())
 		} else {
 			end.WithoutData("error", "Could not find collection "+db)
 		}
