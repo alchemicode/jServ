@@ -21,9 +21,10 @@
 go.work
 
 # jServ Databases directory
-!Databases
-Databases/*
-!Databases/example.json
+!Server/Databases
+Server/Databases/*
+!Server/Databases/example.json
+Server/Build/*
 
 # Testing files
 test_main.go
