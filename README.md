@@ -60,6 +60,7 @@ The <code>config.json</code> file should look something like this:
 ```json
 {   
     "appname": "New app",
+    "debug": true,
     "ip": "localhost", 
     "port": 4040, 
     "Requests": 
@@ -95,7 +96,7 @@ The <code>config.json</code> file should look something like this:
 }
 ```
 
-Change the IP and port to whatever you need. The requests list determines which requests the program will accept. For now, you can leave this alone.
+Change the IP and port to whatever you need. Debug mode will show more detailed request errors. The requests list determines which requests the program will accept. For now, you can leave this alone.
 
 The permissions list determines which requests can be made with the user keys, whereas admin keys will have access to all of them.
 

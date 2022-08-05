@@ -46,6 +46,7 @@ var aliases = map[string]string{
 
 var version string
 var appname string
+var debug bool
 var ip string = "localhost"
 var port int = 4040
 var dbs []*Collection = make([]*Collection, 0)
@@ -72,7 +73,7 @@ func ReadConfig(ch chan bool) {
 	//Reads IP and Port from the config file
 	ip = dat["ip"].(string)
 	port = int(dat["port"].(float64))
-
+	debug = dat["debug"].(bool)
 	//Reads in the values of the Requests list
 	rtemp := dat["Requests"].(map[string]interface{})
 	for key, value := range rtemp {
@@ -364,7 +365,11 @@ func QObject(w http.ResponseWriter, req *http.Request) {
 	}
 	//Changes console message to add '>' prefix if it is an error message
 	if end.Status != "ok" {
-		fmt.Println(" > " + end.Message)
+		if debug {
+			fmt.Println(" > " + end.Message)
+		} else {
+			fmt.Println(" > Request failed")
+		}
 	}
 	//Writes response to http response
 	fmt.Fprint(w, end.ToJson())
@@ -403,7 +408,11 @@ func QAllObjects(w http.ResponseWriter, req *http.Request) {
 	}
 	//Changes console message to add '>' prefix if it is an error message
 	if end.Status != "ok" {
-		fmt.Println(" > " + end.Message)
+		if debug {
+			fmt.Println(" > " + end.Message)
+		} else {
+			fmt.Println(" > Request failed")
+		}
 	}
 	//Writes response to http response
 	fmt.Fprint(w, end.ToJson())
@@ -447,7 +456,11 @@ func QAttribute(w http.ResponseWriter, req *http.Request) {
 	}
 	//Changes console message to add '>' prefix if it is an error message
 	if end.Status != "ok" {
-		fmt.Println(" > " + end.Message)
+		if debug {
+			fmt.Println(" > " + end.Message)
+		} else {
+			fmt.Println(" > Request failed")
+		}
 	}
 	//Writes response to http response
 	fmt.Fprint(w, end.ToJson())
@@ -489,7 +502,11 @@ func QAllAttributes(w http.ResponseWriter, req *http.Request) {
 	}
 	//Changes console message to add '>' prefix if it is an error message
 	if end.Status != "ok" {
-		fmt.Println(" > " + end.Message)
+		if debug {
+			fmt.Println(" > " + end.Message)
+		} else {
+			fmt.Println(" > Request failed")
+		}
 	}
 	//Writes response to http response
 	fmt.Fprint(w, end.ToJson())
@@ -539,7 +556,11 @@ func QByAttributes(w http.ResponseWriter, req *http.Request) {
 	}
 	//Changes console message to add '>' prefix if it is an error message
 	if end.Status != "ok" {
-		fmt.Println(" > " + end.Message)
+		if debug {
+			fmt.Println(" > " + end.Message)
+		} else {
+			fmt.Println(" > Request failed")
+		}
 	}
 	//Writes response to http response
 	fmt.Fprint(w, end.ToJson())
@@ -575,7 +596,11 @@ func QNewId(w http.ResponseWriter, req *http.Request) {
 	}
 	//Changes console message to add '>' prefix if it is an error message
 	if end.Status != "ok" {
-		fmt.Println(" > " + end.Message)
+		if debug {
+			fmt.Println(" > " + end.Message)
+		} else {
+			fmt.Println(" > Request failed")
+		}
 	}
 	//Writes response to http response
 	fmt.Fprint(w, end.ToJson())
@@ -617,7 +642,11 @@ func AEmpty(w http.ResponseWriter, req *http.Request) {
 	}
 	//Changes console message to add '>' prefix if it is an error message
 	if end.Status != "ok" {
-		fmt.Println(" > " + end.Message)
+		if debug {
+			fmt.Println(" > " + end.Message)
+		} else {
+			fmt.Println(" > Request failed")
+		}
 	}
 	//Writes response to http response
 	fmt.Fprint(w, end.ToJson())
@@ -665,7 +694,11 @@ func AObject(w http.ResponseWriter, req *http.Request) {
 	}
 	//Changes console message to add '>' prefix if it is an error message
 	if end.Status != "ok" {
-		fmt.Println(" > " + end.Message)
+		if debug {
+			fmt.Println(" > " + end.Message)
+		} else {
+			fmt.Println(" > Request failed")
+		}
 	}
 	//Writes response to http response
 	fmt.Fprint(w, end.ToJson())
@@ -715,7 +748,11 @@ func AAttribute(w http.ResponseWriter, req *http.Request) {
 	}
 	//Changes console message to add '>' prefix if it is an error message
 	if end.Status != "ok" {
-		fmt.Println(" > " + end.Message)
+		if debug {
+			fmt.Println(" > " + end.Message)
+		} else {
+			fmt.Println(" > Request failed")
+		}
 	}
 	//Writes response to http response
 	fmt.Fprint(w, end.ToJson())
@@ -760,7 +797,11 @@ func MObject(w http.ResponseWriter, req *http.Request) {
 	}
 	//Changes console message to add '>' prefix if it is an error message
 	if end.Status != "ok" {
-		fmt.Println(" > " + end.Message)
+		if debug {
+			fmt.Println(" > " + end.Message)
+		} else {
+			fmt.Println(" > Request failed")
+		}
 	}
 	//Writes response to http response
 	fmt.Fprint(w, end.ToJson())
@@ -810,7 +851,11 @@ func MAttribute(w http.ResponseWriter, req *http.Request) {
 	}
 	//Changes console message to add '>' prefix if it is an error message
 	if end.Status != "ok" {
-		fmt.Println(" > " + end.Message)
+		if debug {
+			fmt.Println(" > " + end.Message)
+		} else {
+			fmt.Println(" > Request failed")
+		}
 	}
 	//Writes response to http response
 	fmt.Fprint(w, end.ToJson())

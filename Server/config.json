@@ -1,5 +1,6 @@
 {   
     "appname": "New app",
+    "debug": true,
     "ip": "localhost", 
     "port": 4040, 
     "Requests": 
