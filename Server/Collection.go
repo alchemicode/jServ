@@ -71,9 +71,9 @@ func (c *Collection) UpdateFile() {
 	go c.updateFile(ch)
 	result := <-ch
 	if result {
-		fmt.Println("Succeeded to update database: " + c.Name + ".json")
+		fmt.Println(" * Updated " + c.Name + ".json")
 	} else {
-		fmt.Println("Failed to update database: " + c.Name + ".json")
+		fmt.Println(" > Failed to update " + c.Name + ".json")
 	}
 }
 
@@ -85,7 +85,7 @@ func (c *Collection) updateFile(ch chan bool) {
 	if err := os.WriteFile(path, []byte(js), 0644); err != nil {
 		//Channel returns false if there is any error
 		ch <- false
-		fmt.Println("Error when opening file " + c.Name + ".json")
+		fmt.Println(" > Error when opening file " + c.Name + ".json")
 	} else {
 		//Channel returns true if the update was successful
 		ch <- true

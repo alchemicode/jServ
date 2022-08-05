@@ -40,6 +40,10 @@ var requestPermissions = map[string]bool{
 	"DObject":        true,
 	"DAttribute":     true}
 
+var aliases = map[string]string{
+	"127.0.0.1": "localhost",
+}
+
 var version string
 var appname string
 var ip string = "localhost"
@@ -55,14 +59,14 @@ func ReadConfig(ch chan bool) {
 	if err != nil {
 		//Channel returns false if there is any error
 		ch <- false
-		fmt.Println("Failed to read config file")
+		fmt.Println(" > Failed to read config file")
 		return
 	}
 	var dat map[string]interface{}
 	if err3 := json.Unmarshal([]byte(content), &dat); err3 != nil {
 		//Channel returns false if there is any error
 		ch <- false
-		fmt.Println("Error when generating json data for config file")
+		fmt.Println(" > Error when generating json data for config file")
 		return
 	}
 	//Reads IP and Port from the config file
@@ -79,6 +83,11 @@ func ReadConfig(ch chan bool) {
 	for key, value := range ptemp {
 		requestPermissions[key] = (value.(string) != "admin")
 	}
+	atemp := dat["Aliases"].(map[string]interface{})
+	for key, value := range atemp {
+		aliases[key] = (value.(string))
+	}
+
 	appname = dat["appname"].(string)
 	//Channel returns true if the read is successful
 	ch <- true
@@ -90,7 +99,7 @@ func ReadDatabases(ch chan bool) {
 	if err != nil {
 		//Channel returns false if there is any error
 		ch <- false
-		fmt.Println("Error when reading Database directory")
+		fmt.Println(" > Error when reading Database directory")
 		return
 	}
 	for _, file := range files {
@@ -112,7 +121,7 @@ func ReadFileAsLines(filename string) []string {
 	//Opens file given in filename
 	file, err := os.Open(filename)
 	if err != nil {
-		fmt.Println("Error when opening " + filename)
+		fmt.Println(" > Error when opening " + filename)
 		panic(err)
 	}
 	defer file.Close()
@@ -140,7 +149,7 @@ func GenerateAdminApiKey(ch chan bool) {
 		}
 	} else {
 		//Channel returns false if there isn't a second line in the file
-		fmt.Println("Failed to detect API Key. Write \"new\" on the last line of admin.jserv")
+		fmt.Println(" > Failed to detect API Key. Write \"new\" on the last line of admin.jserv")
 		ch <- false
 	}
 }
@@ -160,7 +169,7 @@ func GenerateUserApiKey(ch chan bool) {
 		}
 	} else {
 		//Channel returns false if there isn't a second line in the file
-		fmt.Println("Failed to detect API Key. Write \"new\" on the last line of keys.jserv")
+		fmt.Println(" > Failed to detect API Key. Write \"new\" on the last line of keys.jserv")
 		ch <- false
 	}
 }
@@ -316,17 +325,25 @@ func CheckApiKey(key string, permission bool) bool {
 	}
 }
 
+func CheckAlias(address string) string {
+	v, found := aliases[address]
+	if found {
+		return v
+	} else {
+		return address
+	}
+}
+
 func QObject(w http.ResponseWriter, req *http.Request) {
 	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QObject"]) {
-		fmt.Printf("Object query from %s\n", req.RemoteAddr)
 		//Gets necessary query parameters
 		var db string = req.URL.Query().Get("db")
 		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
 		if err != nil {
 			end.WithoutData("error", "Failed to parse id query parameter")
 		} else {
-			fmt.Printf("Queried object %d from %s\n", id, db)
+			fmt.Printf("(%s) Queried object %d from %s\n", CheckAlias(req.RemoteAddr), id, db)
 			//Gets reference to collection
 			C := FindCollection(dbs, db)
 			if C != nil {
@@ -346,9 +363,7 @@ func QObject(w http.ResponseWriter, req *http.Request) {
 		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
 	//Changes console message to add '>' prefix if it is an error message
-	if end.Status == "ok" {
-		fmt.Println(end.Message)
-	} else {
+	if end.Status != "ok" {
 		fmt.Println(" > " + end.Message)
 	}
 	//Writes response to http response
@@ -358,10 +373,9 @@ func QObject(w http.ResponseWriter, req *http.Request) {
 func QAllObjects(w http.ResponseWriter, req *http.Request) {
 	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QAllObjects"]) {
-		fmt.Printf("Objects query from %s\n", req.RemoteAddr)
 		//Gets necessary query parameters
 		var db string = req.URL.Query().Get("db")
-		fmt.Printf("Queried objects from %s\n", db)
+		fmt.Printf("(%s) Queried objects from %s\n", CheckAlias(req.RemoteAddr), db)
 		//Gets reference to collection
 		C := FindCollection(dbs, db)
 		if C != nil {
@@ -388,9 +402,7 @@ func QAllObjects(w http.ResponseWriter, req *http.Request) {
 		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
 	//Changes console message to add '>' prefix if it is an error message
-	if end.Status == "ok" {
-		fmt.Println(end.Message)
-	} else {
+	if end.Status != "ok" {
 		fmt.Println(" > " + end.Message)
 	}
 	//Writes response to http response
@@ -400,7 +412,6 @@ func QAllObjects(w http.ResponseWriter, req *http.Request) {
 func QAttribute(w http.ResponseWriter, req *http.Request) {
 	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QAttribute"]) {
-		fmt.Printf("Attribute query from %s\n", req.RemoteAddr)
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
 		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
@@ -408,7 +419,7 @@ func QAttribute(w http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			end.WithoutData("error", "Failed to parse id query parameter")
 		} else {
-			fmt.Printf("Queried attribute %s in %d from %s\n", att, id, db)
+			fmt.Printf("(%s) Queried attribute %s in %d from %s\n", CheckAlias(req.RemoteAddr), att, id, db)
 			//Gets reference to collection
 			C := FindCollection(dbs, db)
 			if C != nil {
@@ -435,9 +446,7 @@ func QAttribute(w http.ResponseWriter, req *http.Request) {
 		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
 	//Changes console message to add '>' prefix if it is an error message
-	if end.Status == "ok" {
-		fmt.Println(end.Message)
-	} else {
+	if end.Status != "ok" {
 		fmt.Println(" > " + end.Message)
 	}
 	//Writes response to http response
@@ -447,11 +456,10 @@ func QAttribute(w http.ResponseWriter, req *http.Request) {
 func QAllAttributes(w http.ResponseWriter, req *http.Request) {
 	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QAllAttribute"]) {
-		fmt.Printf("All Attributes query from %s\n", req.RemoteAddr)
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
 		att := req.URL.Query().Get("a")
-		fmt.Printf("Queried objects with attribute %s from %s\n", att, db)
+		fmt.Printf("(%s) Queried objects with attribute %s from %s\n", CheckAlias(req.RemoteAddr), att, db)
 		//Gets reference to collection
 		C := FindCollection(dbs, db)
 		if C != nil {
@@ -480,9 +488,7 @@ func QAllAttributes(w http.ResponseWriter, req *http.Request) {
 		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
 	//Changes console message to add '>' prefix if it is an error message
-	if end.Status == "ok" {
-		fmt.Println(end.Message)
-	} else {
+	if end.Status != "ok" {
 		fmt.Println(" > " + end.Message)
 	}
 	//Writes response to http response
@@ -492,7 +498,6 @@ func QAllAttributes(w http.ResponseWriter, req *http.Request) {
 func QByAttributes(w http.ResponseWriter, req *http.Request) {
 	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QByAttribute"]) {
-		fmt.Printf("By Attributes query from %s\n", req.RemoteAddr)
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
 		att := req.URL.Query().Get("a")
@@ -504,7 +509,7 @@ func QByAttributes(w http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			end.WithoutData("error", "Invalid JSON request body")
 		} else {
-			fmt.Printf("Queried objects with attribute %s from %s\n", att, db)
+			fmt.Printf("(%s) Queried objects with attribute %s from %s\n", CheckAlias(req.RemoteAddr), att, db)
 			//Gets reference to collection
 			C := FindCollection(dbs, db)
 			if C != nil {
@@ -533,9 +538,7 @@ func QByAttributes(w http.ResponseWriter, req *http.Request) {
 		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
 	//Changes console message to add '>' prefix if it is an error message
-	if end.Status == "ok" {
-		fmt.Println(end.Message)
-	} else {
+	if end.Status != "ok" {
 		fmt.Println(" > " + end.Message)
 	}
 	//Writes response to http response
@@ -545,10 +548,9 @@ func QByAttributes(w http.ResponseWriter, req *http.Request) {
 func QNewId(w http.ResponseWriter, req *http.Request) {
 	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QNewId"]) {
-		fmt.Printf("New ID query from %s\n", req.RemoteAddr)
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
-		fmt.Printf("Queried %s for new id\n", db)
+		fmt.Printf("(%s) Queried %s for new id\n", CheckAlias(req.RemoteAddr), db)
 		//Gets reference to collection
 		C := FindCollection(dbs, db)
 		if C != nil {
@@ -564,7 +566,7 @@ func QNewId(w http.ResponseWriter, req *http.Request) {
 			ac := AttributeContainer{}
 			ac.New("id", maxID)
 			//Returns id AttributeContainer in response
-			end.WithData("ok", fmt.Sprintf("Queried %s for new ID\n", db), ac.ToJson())
+			end.WithData("ok", fmt.Sprintf("Successfully queried %s for new ID\n", db), ac.ToJson())
 		} else {
 			end.WithoutData("error", "Could not find collection "+db)
 		}
@@ -572,9 +574,7 @@ func QNewId(w http.ResponseWriter, req *http.Request) {
 		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
 	//Changes console message to add '>' prefix if it is an error message
-	if end.Status == "ok" {
-		fmt.Println(end.Message)
-	} else {
+	if end.Status != "ok" {
 		fmt.Println(" > " + end.Message)
 	}
 	//Writes response to http response
@@ -584,14 +584,13 @@ func QNewId(w http.ResponseWriter, req *http.Request) {
 func AEmpty(w http.ResponseWriter, req *http.Request) {
 	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["AEmpty"]) {
-		fmt.Printf("Empty object add request from %s\n", req.RemoteAddr)
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
 		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
 		if err != nil {
 			end.WithoutData("error", "Failed to parse id query parameter")
 		} else {
-			fmt.Printf("Requested to add object %d to %s\n", id, db)
+			fmt.Printf("(%s) Requested to add object %d to %s\n", CheckAlias(req.RemoteAddr), id, db)
 			//Gets reference to collection
 			C := FindCollection(dbs, db)
 			if C != nil {
@@ -617,9 +616,7 @@ func AEmpty(w http.ResponseWriter, req *http.Request) {
 		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
 	//Changes console message to add '>' prefix if it is an error message
-	if end.Status == "ok" {
-		fmt.Println(end.Message)
-	} else {
+	if end.Status != "ok" {
 		fmt.Println(" > " + end.Message)
 	}
 	//Writes response to http response
@@ -629,7 +626,6 @@ func AEmpty(w http.ResponseWriter, req *http.Request) {
 func AObject(w http.ResponseWriter, req *http.Request) {
 	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["AObject"]) {
-		fmt.Printf("Object add request from %s\n", req.RemoteAddr)
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
 		//Reads JSON from request body
@@ -643,7 +639,7 @@ func AObject(w http.ResponseWriter, req *http.Request) {
 			//Creates new DataObject to be added
 			obj := DataObject{}
 			obj.WithData(uint64(objData["id"].(float64)), objData["data"].(map[string]interface{}))
-			fmt.Printf("Requested to add object %d to %s\n", obj.Id, db)
+			fmt.Printf("(%s) Requested to add object %d to %s\n", CheckAlias(req.RemoteAddr), obj.Id, db)
 			//Gets reference to collection
 			C := FindCollection(dbs, db)
 			if C != nil {
@@ -668,9 +664,7 @@ func AObject(w http.ResponseWriter, req *http.Request) {
 		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
 	//Changes console message to add '>' prefix if it is an error message
-	if end.Status == "ok" {
-		fmt.Println(end.Message)
-	} else {
+	if end.Status != "ok" {
 		fmt.Println(" > " + end.Message)
 	}
 	//Writes response to http response
@@ -680,7 +674,6 @@ func AObject(w http.ResponseWriter, req *http.Request) {
 func AAttribute(w http.ResponseWriter, req *http.Request) {
 	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["AAttribute"]) {
-		fmt.Printf("Attribute add request from %s\n", req.RemoteAddr)
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
 		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
@@ -696,7 +689,7 @@ func AAttribute(w http.ResponseWriter, req *http.Request) {
 			if err != nil {
 				end.WithoutData("error", "Failed to parse JSON Response body")
 			} else {
-				fmt.Printf("Requested to add attribute %s to object %d in %s\n", att, id, db)
+				fmt.Printf("(%s) Requested to add attribute %s to object %d in %s\n", CheckAlias(req.RemoteAddr), att, id, db)
 				//Gets reference to collection
 				C := FindCollection(dbs, db)
 				if C != nil {
@@ -721,9 +714,7 @@ func AAttribute(w http.ResponseWriter, req *http.Request) {
 		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
 	//Changes console message to add '>' prefix if it is an error message
-	if end.Status == "ok" {
-		fmt.Println(end.Message)
-	} else {
+	if end.Status != "ok" {
 		fmt.Println(" > " + end.Message)
 	}
 	//Writes response to http response
@@ -733,7 +724,6 @@ func AAttribute(w http.ResponseWriter, req *http.Request) {
 func MObject(w http.ResponseWriter, req *http.Request) {
 	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["MObject"]) {
-		fmt.Printf("Modify object request from %s\n", req.RemoteAddr)
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
 		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
@@ -741,7 +731,7 @@ func MObject(w http.ResponseWriter, req *http.Request) {
 		if err != nil || err2 != nil {
 			end.WithoutData("error", "Failed to parse id query parameter")
 		} else {
-			fmt.Printf("Requested to mod object %d to %d\n", id, newId)
+			fmt.Printf("(%s) Requested to mod object %d to %d\n", CheckAlias(req.RemoteAddr), id, newId)
 			//Gets reference to collection
 			C := FindCollection(dbs, db)
 			if C != nil {
@@ -769,9 +759,7 @@ func MObject(w http.ResponseWriter, req *http.Request) {
 		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
 	//Changes console message to add '>' prefix if it is an error message
-	if end.Status == "ok" {
-		fmt.Println(end.Message)
-	} else {
+	if end.Status != "ok" {
 		fmt.Println(" > " + end.Message)
 	}
 	//Writes response to http response
@@ -781,7 +769,6 @@ func MObject(w http.ResponseWriter, req *http.Request) {
 func MAttribute(w http.ResponseWriter, req *http.Request) {
 	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["MAttribute"]) {
-		fmt.Printf("Modify Attribute request from %s\n", req.RemoteAddr)
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
 		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
@@ -797,7 +784,7 @@ func MAttribute(w http.ResponseWriter, req *http.Request) {
 			if err != nil {
 				end.WithoutData("error", "Failed to parse JSON Response body")
 			} else {
-				fmt.Printf("Requested to modify attribute %s in object %d in %s\n", att, id, db)
+				fmt.Printf("(%s) Requested to modify attribute %s in object %d in %s\n", CheckAlias(req.RemoteAddr), att, id, db)
 				//Gets reference to collection
 				C := FindCollection(dbs, db)
 				if C != nil {
@@ -822,9 +809,7 @@ func MAttribute(w http.ResponseWriter, req *http.Request) {
 		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
 	//Changes console message to add '>' prefix if it is an error message
-	if end.Status == "ok" {
-		fmt.Println(end.Message)
-	} else {
+	if end.Status != "ok" {
 		fmt.Println(" > " + end.Message)
 	}
 	//Writes response to http response
@@ -834,14 +819,13 @@ func MAttribute(w http.ResponseWriter, req *http.Request) {
 func DObject(w http.ResponseWriter, req *http.Request) {
 	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["DObject"]) {
-		fmt.Printf("Delete object request from %s\n", req.RemoteAddr)
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
 		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
 		if err != nil {
 			end.WithoutData("error", "Failed to parse id query parameter")
 		} else {
-			fmt.Printf("Requested to delete object %d\n", id)
+			fmt.Printf("(%s) Requested to delete object %d\n", CheckAlias(req.RemoteAddr), id)
 			//Gets reference to collection
 			C := FindCollection(dbs, db)
 			if C != nil {
@@ -865,9 +849,7 @@ func DObject(w http.ResponseWriter, req *http.Request) {
 		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
 	//Changes console message to add '>' prefix if it is an error message
-	if end.Status == "ok" {
-		fmt.Println(end.Message)
-	} else {
+	if end.Status != "ok" {
 		fmt.Println(" > " + end.Message)
 	}
 	//Writes response to http response
@@ -877,7 +859,6 @@ func DObject(w http.ResponseWriter, req *http.Request) {
 func DAttribute(w http.ResponseWriter, req *http.Request) {
 	end := Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["DAttribute"]) {
-		fmt.Printf("Delete attribute request from %s\n", req.RemoteAddr)
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
 		id, err := strconv.ParseUint(req.URL.Query().Get("id"), 10, 64)
@@ -885,7 +866,7 @@ func DAttribute(w http.ResponseWriter, req *http.Request) {
 			end.WithoutData("error", "Failed to parse id query parameter")
 		} else {
 			att := req.URL.Query().Get("a")
-			fmt.Printf("Requested to delete attribute %s in object %d in %s\n", att, id, db)
+			fmt.Printf("(%s) Requested to delete attribute %s in object %d in %s\n", CheckAlias(req.RemoteAddr), att, id, db)
 			//Gets reference to collection
 			C := FindCollection(dbs, db)
 			if C != nil {
@@ -913,9 +894,7 @@ func DAttribute(w http.ResponseWriter, req *http.Request) {
 		end.WithoutData("error", "Unauthorized Request from "+req.RemoteAddr)
 	}
 	//Changes console message to add '>' prefix if it is an error message
-	if end.Status == "ok" {
-		fmt.Println(end.Message)
-	} else {
+	if end.Status != "ok" {
 		fmt.Println(" > " + end.Message)
 	}
 	//Writes response to http response

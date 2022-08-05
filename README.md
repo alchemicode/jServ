@@ -87,13 +87,19 @@ The <code>config.json</code> file should look something like this:
         "MAttribute": "user", 
         "DObject": "user", 
         "DAttribute": "user" 
-    } 
+    },
+    "Aliases":
+    {
+        "127.0.0.1":"localhost"
+    }
 }
 ```
 
 Change the IP and port to whatever you need. The requests list determines which requests the program will accept. For now, you can leave this alone.
 
 The permissions list determines which requests can be made with the user keys, whereas admin keys will have access to all of them.
+
+The aliases list will change how certain addresses are displayed within the console.
 
 When you run the program for the first time, an Admin API key will generate in the `admin.jserv` file, and a User API key will generate in the `keys.jserv` file.
 The program will reject any requests that do not have these keys in the `"x-api-key"` header.
