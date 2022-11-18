@@ -1,2 +1,4 @@
+github.com/codealchemi/jServCore v1.0.0 h1:NwSiAKlZfN4MsWZMoGx7POB1pPDn/SRy+iaysTShq2w=
+github.com/codealchemi/jServCore v1.0.0/go.mod h1:myDwSBV5gJxRCnEsjf7tnsfsNM0IXFk4nYboyL8yWGM=
 github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
 github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=

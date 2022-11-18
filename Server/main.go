@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 
+	j "github.com/codealchemi/jServCore"
 	"github.com/google/uuid"
 )
 
@@ -22,7 +23,8 @@ var requestTypes = map[string]bool{
 	"HEAD":    false,
 	"DELETE":  true,
 	"PATCH":   false,
-	"OPTIONS": false}
+	"OPTIONS": false,
+}
 
 var requestPermissions = map[string]bool{
 	//False denotes that an admin API key is required to make that request
@@ -38,7 +40,8 @@ var requestPermissions = map[string]bool{
 	"MObject":        true,
 	"MAttribute":     true,
 	"DObject":        true,
-	"DAttribute":     true}
+	"DAttribute":     true,
+}
 
 var aliases = map[string]string{
 	"127.0.0.1": "localhost",
@@ -49,7 +52,7 @@ var appname string
 var debug bool
 var ip string = "localhost"
 var port int = 4040
-var dbs []*Collection = make([]*Collection, 0)
+var dbs []*j.Collection = make([]*j.Collection, 0)
 
 var adminKey []string = make([]string, 0)
 var userKeys []string = make([]string, 0)
@@ -107,7 +110,7 @@ func ReadDatabases(ch chan bool) {
 		if !file.IsDir() {
 			//Creates a new collection for each file in the directory
 			name := strings.Split(file.Name(), ".")[0]
-			col := new(Collection)
+			col := new(j.Collection)
 			col.New(name)
 			dbs = append(dbs, col)
 			fmt.Println(" * Loaded the database \"" + name + "\"")
@@ -261,7 +264,7 @@ func contains(s []string, str string) bool {
 }
 
 //Checks for a collection of the given name
-func FindCollection(c []*Collection, name string) *Collection {
+func FindCollection(c []*j.Collection, name string) *j.Collection {
 	for _, v := range c {
 		if v.Name == name {
 			return v
@@ -271,7 +274,7 @@ func FindCollection(c []*Collection, name string) *Collection {
 }
 
 //Checks for an object of the given id in a collection
-func FindDataObject(c *Collection, id uint64) *DataObject {
+func FindDataObject(c *j.Collection, id uint64) *j.DataObject {
 	for _, v := range c.List {
 		if v.Id == id {
 			return &v
@@ -281,8 +284,8 @@ func FindDataObject(c *Collection, id uint64) *DataObject {
 }
 
 //Checks for objects of a given attribute in a collection
-func FindDataObjects(c *Collection, att string) []*DataObject {
-	data := make([]*DataObject, 0)
+func FindDataObjects(c *j.Collection, att string) []*j.DataObject {
+	data := make([]*j.DataObject, 0)
 	for _, v := range c.List {
 		for k := range v.Data {
 			if k == att {
@@ -293,18 +296,18 @@ func FindDataObjects(c *Collection, att string) []*DataObject {
 	return data
 }
 
-func RemoveDataObject(c *Collection, id uint64) {
+func RemoveDataObject(c *j.Collection, id uint64) {
 	for i, v := range c.List {
 		if v.Id == id {
-			c.List[i] = c.List[len(c.List)-1]    // Copy last element to index i.
-			c.List[len(c.List)-1] = DataObject{} // Erase last element (write zero value).
+			c.List[i] = c.List[len(c.List)-1]      // Copy last element to index i.
+			c.List[len(c.List)-1] = j.DataObject{} // Erase last element (write zero value).
 			c.List = c.List[:len(c.List)-1]
 			break
 		}
 	}
 }
 
-func RemoveAttribute(c *Collection, id uint64, att string) {
+func RemoveAttribute(c *j.Collection, id uint64, att string) {
 	for _, v := range c.List {
 		if v.Id == id {
 			for j := range v.Data {
@@ -336,7 +339,7 @@ func CheckAlias(address string) string {
 }
 
 func QObject(w http.ResponseWriter, req *http.Request) {
-	end := Response{}
+	end := j.Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QObject"]) {
 		//Gets necessary query parameters
 		var db string = req.URL.Query().Get("db")
@@ -376,7 +379,7 @@ func QObject(w http.ResponseWriter, req *http.Request) {
 }
 
 func QAllObjects(w http.ResponseWriter, req *http.Request) {
-	end := Response{}
+	end := j.Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QAllObjects"]) {
 		//Gets necessary query parameters
 		var db string = req.URL.Query().Get("db")
@@ -419,7 +422,7 @@ func QAllObjects(w http.ResponseWriter, req *http.Request) {
 }
 
 func QAttribute(w http.ResponseWriter, req *http.Request) {
-	end := Response{}
+	end := j.Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QAttribute"]) {
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
@@ -437,7 +440,7 @@ func QAttribute(w http.ResponseWriter, req *http.Request) {
 				if data != nil {
 					//Gets attribute from the DataObject
 					if val, ok := data.Data[att]; ok {
-						attribute := new(AttributeContainer)
+						attribute := new(j.AttributeContainer)
 						attribute.New(att, val)
 						//Returns AttributeContainer as a JSON Object in response
 						end.WithData("ok", fmt.Sprintf("Successfully queried object %d from %s\n", id, db), attribute.ToJson())
@@ -467,7 +470,7 @@ func QAttribute(w http.ResponseWriter, req *http.Request) {
 }
 
 func QAllAttributes(w http.ResponseWriter, req *http.Request) {
-	end := Response{}
+	end := j.Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QAllAttribute"]) {
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
@@ -513,7 +516,7 @@ func QAllAttributes(w http.ResponseWriter, req *http.Request) {
 }
 
 func QByAttributes(w http.ResponseWriter, req *http.Request) {
-	end := Response{}
+	end := j.Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QByAttribute"]) {
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
@@ -567,7 +570,7 @@ func QByAttributes(w http.ResponseWriter, req *http.Request) {
 }
 
 func QNewId(w http.ResponseWriter, req *http.Request) {
-	end := Response{}
+	end := j.Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["QNewId"]) {
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
@@ -584,7 +587,7 @@ func QNewId(w http.ResponseWriter, req *http.Request) {
 			}
 			maxID += 1
 			//Creates AttributeContainer to return the new id
-			ac := AttributeContainer{}
+			ac := j.AttributeContainer{}
 			ac.New("id", maxID)
 			//Returns id AttributeContainer in response
 			end.WithData("ok", fmt.Sprintf("Successfully queried %s for new ID\n", db), ac.ToJson())
@@ -607,7 +610,7 @@ func QNewId(w http.ResponseWriter, req *http.Request) {
 }
 
 func AEmpty(w http.ResponseWriter, req *http.Request) {
-	end := Response{}
+	end := j.Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["AEmpty"]) {
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
@@ -623,7 +626,7 @@ func AEmpty(w http.ResponseWriter, req *http.Request) {
 				data := FindDataObject(C, id)
 				if data == nil {
 					//Creates new empty DataObject
-					obj := DataObject{}
+					obj := j.DataObject{}
 					obj.WithoutData(id)
 					//Updates collection
 					C.List = append(C.List, obj)
@@ -653,7 +656,7 @@ func AEmpty(w http.ResponseWriter, req *http.Request) {
 }
 
 func AObject(w http.ResponseWriter, req *http.Request) {
-	end := Response{}
+	end := j.Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["AObject"]) {
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
@@ -666,7 +669,7 @@ func AObject(w http.ResponseWriter, req *http.Request) {
 			end.WithoutData("error", "Failed to parse Request body")
 		} else {
 			//Creates new DataObject to be added
-			obj := DataObject{}
+			obj := j.DataObject{}
 			obj.WithData(uint64(objData["id"].(float64)), objData["data"].(map[string]interface{}))
 			fmt.Printf("(%s) Requested to add object %d to %s\n", CheckAlias(req.RemoteAddr), obj.Id, db)
 			//Gets reference to collection
@@ -705,7 +708,7 @@ func AObject(w http.ResponseWriter, req *http.Request) {
 }
 
 func AAttribute(w http.ResponseWriter, req *http.Request) {
-	end := Response{}
+	end := j.Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["AAttribute"]) {
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
@@ -759,7 +762,7 @@ func AAttribute(w http.ResponseWriter, req *http.Request) {
 }
 
 func MObject(w http.ResponseWriter, req *http.Request) {
-	end := Response{}
+	end := j.Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["MObject"]) {
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
@@ -808,7 +811,7 @@ func MObject(w http.ResponseWriter, req *http.Request) {
 }
 
 func MAttribute(w http.ResponseWriter, req *http.Request) {
-	end := Response{}
+	end := j.Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["MAttribute"]) {
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
@@ -862,7 +865,7 @@ func MAttribute(w http.ResponseWriter, req *http.Request) {
 }
 
 func DObject(w http.ResponseWriter, req *http.Request) {
-	end := Response{}
+	end := j.Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["DObject"]) {
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
@@ -902,7 +905,7 @@ func DObject(w http.ResponseWriter, req *http.Request) {
 }
 
 func DAttribute(w http.ResponseWriter, req *http.Request) {
-	end := Response{}
+	end := j.Response{}
 	if CheckApiKey(req.Header.Get("x-api-key"), requestPermissions["DAttribute"]) {
 		//Gets necessary query parameters
 		db := req.URL.Query().Get("db")
