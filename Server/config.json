@@ -1,6 +1,8 @@
 {   
     "appname": "New app",
     "debug": true,
+    "admin-path": "admin.jserv",
+    "key-path": "keys.jserv",
     "ip": "localhost", 
     "port": 4040, 
     "Requests": 
