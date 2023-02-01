@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://codealchemi.com/images/jserv.png" width="256px" height="256px">
+    <img src="https://alchemicode.com/images/jserv.png" width="256px" height="256px">
 </p>
 
 <h1 align="center">
@@ -51,7 +51,7 @@
 <br><br>
 
 <h2>Getting Started</h2>
-To set up jServ, download the latest release, and unzip it into a folder, and run the executable. You will have a <code>config.json</code> file, a <code>keys.jserv</code> file, and an <code>admin.jserv</code> file. 
+To set up jServ, download the latest release, and unzip it into a folder, and run the executable. You will have a <code>config.json</code> file. 
 There will also be a directory called <code>Databases</code>, with an <code>example.json</code> given to get started. To add a collection to the program, simply add a json file of any name, and add <code>[]</code> to the first line, and the program will read it.
 
 Before you execute the program for the first time, you should check in your config and data files.
@@ -61,6 +61,8 @@ The <code>config.json</code> file should look something like this:
 {   
     "appname": "New app",
     "debug": true,
+    "admin-path": "admin.jserv",
+    "key-path": "keys.jserv",
     "ip": "localhost", 
     "port": 4040, 
     "Requests": 
@@ -102,8 +104,10 @@ The permissions list determines which requests can be made with the user keys, w
 
 The aliases list will change how certain addresses are displayed within the console.
 
-When you run the program for the first time, an Admin API key will generate in the `admin.jserv` file, and a User API key will generate in the `keys.jserv` file.
+When you run the program for the first time, an Admin API key will generate in the `admin.jserv` file, and a User API key will generate in the `keys.jserv` file at the paths specified in the config files.
 The program will reject any requests that do not have these keys in the `"x-api-key"` header.
+
+If you want the config file in a different path, you can enter the path as a command line argument when running jServ.
 
 
 <h2>Program Reference</h2>
