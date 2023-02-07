@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://alchemicode.com/images/jserv.png" width="256px" height="256px">
+    <img src="https://alchemicode.com/images/logos/jserv.png" width="256px" height="256px">
 </p>
 
 <h1 align="center">
