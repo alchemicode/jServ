@@ -54,12 +54,20 @@ var ip string = "localhost"
 var port int = 4040
 var dbs []*j.Collection = make([]*j.Collection, 0)
 
+var adminPath string
 var adminKey []string = make([]string, 0)
+var keyPath string
 var userKeys []string = make([]string, 0)
 
 func ReadConfig(ch chan bool) {
+	var path string
+	if len(os.Args) == 1 {
+		path = "config.json"
+	} else {
+		path = os.Args[1]
+	}
 	//Reads the contents of the config file into a string
-	content, err := os.ReadFile("config.json")
+	content, err := os.ReadFile(path)
 	if err != nil {
 		//Channel returns false if there is any error
 		ch <- false
@@ -77,6 +85,8 @@ func ReadConfig(ch chan bool) {
 	ip = dat["ip"].(string)
 	port = int(dat["port"].(float64))
 	debug = dat["debug"].(bool)
+	adminPath = dat["admin-path"].(string)
+	keyPath = dat["key-path"].(string)
 	//Reads in the values of the Requests list
 	rtemp := dat["Requests"].(map[string]interface{})
 	for key, value := range rtemp {
@@ -120,7 +130,7 @@ func ReadDatabases(ch chan bool) {
 	ch <- true
 }
 
-//Returns the contents of a file as a slice of strings
+// Returns the contents of a file as a slice of strings
 func ReadFileAsLines(filename string) []string {
 	//Opens file given in filename
 	file, err := os.Open(filename)
@@ -138,35 +148,38 @@ func ReadFileAsLines(filename string) []string {
 	return lines
 }
 
-//Checksfor a 'new' keyword in the admin file and replaces it with a new uuid
+// Checksfor a 'new' keyword in the admin file and replaces it with a new uuid
 func GenerateAdminApiKey(ch chan bool) {
-	lines := ReadFileAsLines("admin.jserv")
+	lines := ReadFileAsLines(adminPath)
 	if len(lines) > 0 {
 		if lines[len(lines)-1] == "new" {
 			randomuuid := uuid.New()
 			adminKey = append(adminKey, randomuuid.String())
 			lines[len(lines)-1] = randomuuid.String()
-			ioutil.WriteFile("admin.jserv", []byte(strings.Join(lines, "\n")), 0644)
+			ioutil.WriteFile(adminPath, []byte(strings.Join(lines, "\n")), 0644)
 			ch <- true
 		} else {
 			ch <- true
 		}
 	} else {
 		//Channel returns false if there isn't a second line in the file
-		fmt.Println(" > Failed to detect API Key. Write \"new\" on the last line of admin.jserv")
-		ch <- false
+		randomuuid := uuid.New()
+		adminKey = append(adminKey, randomuuid.String())
+		lines[0] = randomuuid.String()
+		ioutil.WriteFile(adminPath, []byte(strings.Join(lines, "\n")), 0644)
+		ch <- true
 	}
 }
 
-//Checks for a 'new' keyword in the admin file and replaces it with a new uuid
+// Checks for a 'new' keyword in the admin file and replaces it with a new uuid
 func GenerateUserApiKey(ch chan bool) {
-	lines := ReadFileAsLines("keys.jserv")
+	lines := ReadFileAsLines(keyPath)
 	if len(lines) > 0 {
 		if lines[len(lines)-1] == "new" {
 			randomuuid := uuid.New()
 			userKeys = append(userKeys, randomuuid.String())
 			lines[len(lines)-1] = randomuuid.String()
-			ioutil.WriteFile("keys.jserv", []byte(strings.Join(lines, "\n")), 0644)
+			ioutil.WriteFile(keyPath, []byte(strings.Join(lines, "\n")), 0644)
 			ch <- true
 		} else {
 			ch <- true
@@ -178,16 +191,16 @@ func GenerateUserApiKey(ch chan bool) {
 	}
 }
 
-//Reads all api keys from admin and keys file
+// Reads all api keys from admin and keys file
 func ReadKeys(ch chan bool) {
 	//reads the lines that aren't 'new' '' or ' '
-	lines := ReadFileAsLines("admin.jserv")
+	lines := ReadFileAsLines(adminPath)
 	for i := 0; i < len(lines); i++ {
 		if lines[i] != "new" && lines[i] != "" && lines[i] != " " {
 			adminKey = append(adminKey, lines[i])
 		}
 	}
-	lines = ReadFileAsLines("keys.jserv")
+	lines = ReadFileAsLines(keyPath)
 	for i := 0; i < len(lines); i++ {
 		if lines[i] != "new" && lines[i] != "" && lines[i] != " " {
 			userKeys = append(userKeys, lines[i])
@@ -196,18 +209,18 @@ func ReadKeys(ch chan bool) {
 	ch <- true
 }
 
-//Checks the validity of all the required jserv data files
+// Checks the validity of all the required jserv data files
 func CheckFiles() {
 	//Checks if the files exist, create them if not, and panic if there is any error
-	if _, err := os.Stat("admin.jserv"); os.IsNotExist(err) {
-		f, err := os.Create("admin.jserv")
+	if _, err := os.Stat(adminPath); os.IsNotExist(err) {
+		f, err := os.Create(adminPath)
 		if err != nil {
 			panic(err)
 		}
 		f.WriteString("new")
 	}
-	if _, err := os.Stat("keys.jserv"); os.IsNotExist(err) {
-		f, err := os.Create("keys.jserv")
+	if _, err := os.Stat(keyPath); os.IsNotExist(err) {
+		f, err := os.Create(keyPath)
 		if err != nil {
 			panic(err)
 		}
@@ -216,7 +229,7 @@ func CheckFiles() {
 	version = "0.2.0"
 }
 
-//The starting sequence to perform all the necessary checks before the server starts
+// The starting sequence to perform all the necessary checks before the server starts
 func StartSequence() {
 	fmt.Println(" * Starting...")
 	CheckFiles()
@@ -253,7 +266,7 @@ func StartSequence() {
 	fmt.Printf(" * Running jServ v%s for %s\n", version, appname)
 }
 
-//Checks if a string slice contains a string
+// Checks if a string slice contains a string
 func contains(s []string, str string) bool {
 	for _, v := range s {
 		if v == str {
@@ -263,7 +276,7 @@ func contains(s []string, str string) bool {
 	return false
 }
 
-//Checks for a collection of the given name
+// Checks for a collection of the given name
 func FindCollection(c []*j.Collection, name string) *j.Collection {
 	for _, v := range c {
 		if v.Name == name {
@@ -273,7 +286,7 @@ func FindCollection(c []*j.Collection, name string) *j.Collection {
 	return nil
 }
 
-//Checks for an object of the given id in a collection
+// Checks for an object of the given id in a collection
 func FindDataObject(c *j.Collection, id uint64) *j.DataObject {
 	for _, v := range c.List {
 		if v.Id == id {
@@ -283,7 +296,7 @@ func FindDataObject(c *j.Collection, id uint64) *j.DataObject {
 	return nil
 }
 
-//Checks for objects of a given attribute in a collection
+// Checks for objects of a given attribute in a collection
 func FindDataObjects(c *j.Collection, att string) []*j.DataObject {
 	data := make([]*j.DataObject, 0)
 	for _, v := range c.List {
@@ -320,7 +333,7 @@ func RemoveAttribute(c *j.Collection, id uint64, att string) {
 	}
 }
 
-//Checks if the given API key matches the permissions bool of a query type
+// Checks if the given API key matches the permissions bool of a query type
 func CheckApiKey(key string, permission bool) bool {
 	if !permission {
 		return contains(adminKey, key)
