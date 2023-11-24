@@ -7,7 +7,7 @@
 </h1>
 
 <h3 align="center">
-    A project by codealchemi
+    A project by alchemicode
 </h3>
 
 <p align="center">
@@ -20,7 +20,7 @@
 <hr>
 
 <h2 align="center">
-    A flexible database server
+    A flexible backend server
 </h2>
 
 <br>
@@ -44,7 +44,7 @@
             jServ has a flexible data structure that allows you to customize the database and it's functionality, with or without modifying the code.<br>
         </td>
         <td align="center">
-            jServ's driving force is it's use of JSON in it's data structure, allowing for a practical and effortless experience.<br>
+            jServ's driving force is it's use of multiple markup languages in it's data structure, allowing for a practical and effortless experience.<br>
         </td>
     </tr>
 </table>
@@ -132,7 +132,7 @@ The <code>status</code> value will appear as either <code>"ok"</code> or <code>"
 
 To get set up quickly, consider using one of our libraries with methods to handle the requests.
 
-Python - <a href="https://github.com/Codealchemi/jServ-python-lib">https://github.com/Codealchemi/jServ-python-lib</a>
+Python - <a href="https://github.com/alchemicode/jServ-python-lib">https://github.com/alchemicode/jServ-python-lib</a>
 
 <h3>Data Structure</h3>
 
@@ -354,6 +354,6 @@ jServ's API is built around a system of specific requests and query parameters.
 <br>
 <h2 align="center">License and Copyright Notice</h2>
 <p align="center">
-    Copyright (c) 2022, Kristofer Ter-Gabrielyan. All Rights Reserved. 
+    Copyright (c) 2024, alchemicode. All Rights Reserved. 
     Permission to modify and redistribute is granted under the terms of the Apache 2.0.
 </p>
