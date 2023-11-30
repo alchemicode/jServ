@@ -58,9 +58,10 @@ There will also be a directory called <code>Collections</code>, with an <code>ex
 
 <p>
 Before you execute the program for the first time, you should check in your config and data files.
+<br>
+The <code>config.json</code> file should look something like this:
 </p>
 
-The <code>config.json</code> file should look something like this:
 ```json
 {   
     "appname": "New app",
@@ -118,6 +119,7 @@ jServ's database relies on the use of HTTP requests to send instructions and dat
 There are built-in request handlers that execute a variety of database operations (See below).
 
 Each request will give a response in the form of a JSON object. It appears as follows (with example values)
+
 ```json
 {
     "status": "ok",
