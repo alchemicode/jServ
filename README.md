@@ -30,10 +30,10 @@
             Build your backend fast and simple
         </th> 
         <th align="center">
-            Adapt the server to your project with custom endpoint functions
+            Easy document-based database with no query language
         </th>
         <th align="center">
-            Multiplatform, well-documented, and easy to use
+            Adapt the server to your project with broad markup support and custom endpoint functions
         </th>
     </tr>
     <tr>
@@ -44,7 +44,7 @@
             jServ has a flexible data structure that allows you to customize the database and it's functionality, with or without modifying the code.<br>
         </td>
         <td align="center">
-            jServ's driving force is it's use of multiple markup languages in it's data structure, allowing for a practical and effortless experience.<br>
+            jServ's driving force is it's use of multiple markup languages in it's data structure, and scriptable endpoints.<br>
         </td>
     </tr>
 </table>
