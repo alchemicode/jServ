@@ -119,6 +119,7 @@ jServ's database relies on the use of HTTP requests to send instructions and dat
 There are built-in request handlers that execute a variety of database operations (See below).
 
 Each request will give a response in the form of a JSON object. It appears as follows (with example values)
+</p>
 
 ```json
 {
@@ -139,7 +140,7 @@ The <code>status</code> value will appear as either <code>"ok"</code> or <code>"
 <p>
 The database follows a document-based structure which internally relies on three classes, <code>Document</code>, <code>Attribute</code>, and <code>Collection</code>. 
 </p>
-
+<br>
 <p>
 <code>Document</code> is the class that represents objects in the database. When serialized as a JSON object, it appears as follows (with example values)
 </p>
@@ -246,6 +247,7 @@ Possible properties of a query, written in JSON format, are as follows:
     }
 }
 ```
+
 <p>This request returns the list of documents queried.</p>
 </dd>
 </dl>
@@ -280,6 +282,7 @@ The format of an Add, written in JSON, is as follows:
     }
 }
 ```
+
 <p>This request returns a list of elements added, and elements skipped.</p>
 </dd>
 </dl>
@@ -306,6 +309,7 @@ The format of an Add, written in JSON, is as follows:
     }
 }
 ```
+
 <p>This request returns a list of changes made, and changes skipped.</p>
 </dd>
 </dl>
