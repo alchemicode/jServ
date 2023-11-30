@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://codealchemi.com/images/jserv.png" width="256px" height="256px">
+    <img src="https://alchemicode.com/images/logos/jserv.png" width="256px" height="256px">
 </p>
 
 <h1 align="center">
@@ -7,7 +7,7 @@
 </h1>
 
 <h3 align="center">
-    A project by codealchemi
+    A project by alchemicode
 </h3>
 
 <p align="center">
@@ -44,7 +44,7 @@
             jServ has a flexible data structure that allows you to customize the database and it's functionality, with or without modifying the code.<br>
         </td>
         <td align="center">
-            jServ's driving force is it's use of JSON in it's data structure, allowing for a practical and effortless experience.<br>
+            jServ's driving force is it's use of multiple markup languages in it's data structure, allowing for a practical and effortless experience.<br>
         </td>
     </tr>
 </table>
@@ -65,6 +65,8 @@ The <code>config.json</code> file should look something like this:
 {   
     "appname": "New app",
     "debug": true,
+    "admin-path": "admin.jserv",
+    "key-path": "keys.jserv",
     "ip": "localhost", 
     "port": 4040, 
     "write-interval": 10,
@@ -128,7 +130,6 @@ Each request will give a response in the form of a JSON object. It appears as fo
 <p>
 The <code>status</code> value will appear as either <code>"ok"</code> or <code>"error"</code>, and the <code>message</code> value will display a message either confirming the success, or explaining the error. The <code>data</code> value may not appear, and will only contain data if the request returns it.
 </p>
-
 
 <h3>Data Structure</h3>
 (All of these structures can also be found in the <a href="https://github.com/alchemicode/jserv-core">jServ core library</a>)
