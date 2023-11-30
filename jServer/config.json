@@ -1,0 +1,33 @@
+{   
+    "appname": "New app",
+    "debug": true,
+    "ip": "localhost", 
+    "port": 4040, 
+    "write-interval": 10,
+    "Requests": 
+    {   
+        "GET": true, 
+        "POST": true, 
+        "PUT": false, 
+        "HEAD": true, 
+        "DELETE": true, 
+        "PATCH": false, 
+        "OPTIONS": false 
+    }, 
+    "Permissions": 
+    { 
+        "Query":  "user",
+        "Add":    "user",
+        "Mod":    "user",
+        "Delete": "user",
+        "Purge":  "user"
+    },
+    "Aliases":
+    {
+        "127.0.0.1":"localhost"
+    },
+    "Services":
+    {
+        "/" : "index"
+    }
+}

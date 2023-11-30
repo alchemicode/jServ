@@ -20,20 +20,20 @@
 <hr>
 
 <h2 align="center">
-    A flexible database server
+    A flexible backend server
 </h2>
 
 <br>
 <table border="0">
     <tr>
         <th align="center">
-            Build your backend fast, no strings attached
+            Build your backend fast and simple
         </th> 
         <th align="center">
-            Adapt the server's API and workflow to your project
+            Adapt the server to your project with custom endpoint functions
         </th>
         <th align="center">
-            Multiplatform, Simple, well-documented and easy to use
+            Multiplatform, well-documented, and easy to use
         </th>
     </tr>
     <tr>
@@ -51,10 +51,14 @@
 <br><br>
 
 <h2>Getting Started</h2>
+<p>
 To set up jServ, download the latest release, and unzip it into a folder, and run the executable. You will have a <code>config.json</code> file, a <code>keys.jserv</code> file, and an <code>admin.jserv</code> file. 
-There will also be a directory called <code>Databases</code>, with an <code>example.json</code> given to get started. To add a collection to the program, simply add a json file of any name, and add <code>[]</code> to the first line, and the program will read it.
+There will also be a directory called <code>Collections</code>, with an <code>example.dat</code> given to get started. To add a collection to the program, simply add a <code>.dat</code> file of any name, and the program will read it.
+</p>
 
+<p>
 Before you execute the program for the first time, you should check in your config and data files.
+</p>
 
 The <code>config.json</code> file should look something like this:
 ```json
@@ -63,6 +67,7 @@ The <code>config.json</code> file should look something like this:
     "debug": true,
     "ip": "localhost", 
     "port": 4040, 
+    "write-interval": 10,
     "Requests": 
     {   
         "GET": true, 
@@ -75,96 +80,98 @@ The <code>config.json</code> file should look something like this:
     }, 
     "Permissions": 
     { 
-        "QObject": "user", 
-        "QAllObjects": "user",
-        "QAttribute": "user", 
-        "QAllAttributes": "user", 
-        "QByAttribute": "user", 
-        "QnewId": "admin", 
-        "AEmpty": "user", 
-        "AObject": "user", 
-        "AAttribute": "user", 
-        "MObject": "user", 
-        "MAttribute": "user", 
-        "DObject": "user", 
-        "DAttribute": "user" 
+        "Query":  "user",
+        "Add":    "user",
+        "Mod":    "user",
+        "Delete": "user",
+        "Purge":  "user"
     },
     "Aliases":
     {
         "127.0.0.1":"localhost"
+    },
+    "Services":
+    {
+        "/" : "index"
     }
 }
 ```
-
-Change the IP and port to whatever you need. Debug mode will show more detailed request errors. The requests list determines which requests the program will accept. For now, you can leave this alone.
+<p>
+Change the IP and port to whatever you need. Debug mode will show more detailed console logging. The requests list determines which requests the program will accept.
 
 The permissions list determines which requests can be made with the user keys, whereas admin keys will have access to all of them.
 
 The aliases list will change how certain addresses are displayed within the console.
 
-When you run the program for the first time, an Admin API key will generate in the `admin.jserv` file, and a User API key will generate in the `keys.jserv` file.
-The program will reject any requests that do not have these keys in the `"x-api-key"` header.
+When you run the program for the first time, an Admin API key will generate in the <code>admin.jserv</code> file, and a User API key will generate in the <code>keys.jserv</code> file.
+The program will reject any requests that do not have these keys in the <code>"x-api-key"</code> header.
+</p>
 
+<h1>Program Reference</h1>
 
-<h2>Program Reference</h2>
+<h2>Database</h2>
 
-<h3>Interfacing</h3>
+<p>
+jServ's database relies on the use of HTTP requests to send instructions and data back and forth between the instance and your program.
+There are built-in request handlers that execute a variety of database operations (See below).
 
-jServ relies on the use of HTTP requests. This is how data is sent back and forth between the instance and your program.
-There are several built-in request handlers that allow a variety of methods to work with your data (See below).
-
-Each request will give a response in the form of a JSON object. It appears as the following (with example values),
+Each request will give a response in the form of a JSON object. It appears as follows (with example values)
 ```json
 {
     "status": "ok",
     "message": "Successfully queried some-database for some-object",
     "data": {
-        "id": 0,
-        "data": {"some-key": "some-value"}
+        "some-data": "some-value"
     }
 }
 ```
-The <code>status</code> value will appear as either <code>"ok"</code> or <code>"error"</code>, and the <code>message</code> value will display a message either confirming the success, or giving an error message. The <code>data</code> value may be empty, and will only contain data if the request returns it.
+<p>
+The <code>status</code> value will appear as either <code>"ok"</code> or <code>"error"</code>, and the <code>message</code> value will display a message either confirming the success, or explaining the error. The <code>data</code> value may not appear, and will only contain data if the request returns it.
+</p>
 
-To get set up quickly, consider using one of our libraries with methods to handle the requests.
-
-Python - <a href="https://github.com/Codealchemi/jServ-python-lib">https://github.com/Codealchemi/jServ-python-lib</a>
 
 <h3>Data Structure</h3>
+(All of these structures can also be found in the <a href="https://github.com/alchemicode/jserv-core">jServ core library</a>)
+<br><br>
+<p>
+The database follows a document-based structure which internally relies on three classes, <code>Document</code>, <code>Attribute</code>, and <code>Collection</code>. 
+</p>
 
+<p>
+<code>Document</code> is the class that represents objects in the database. When serialized as a JSON object, it appears as follows (with example values)
+</p>
 
-The data structure relies on three classes, `DataObject`, `AttributeContainer`, and `Collection`. 
- 
-
-`DataObject` is the class that all instances in the database come from. When serialized as a JSON object, it appears as the following (with example values),
 ```json
 {
-    "id": 0,
+    "_id": "some-unique-identifier",
     "data": {"some-key": "some-value"}
 }
 ```
-
-The reason the object has only two fields is that the developer defines what attributes each object will have within the `data` field. The `id` field is the only definite field to any object, as it is required for the API to be functional. It is dependent on you to implement field enforcement in your applications, and to ensure that the data fields are consistent across all objects. 
- 
+<p>
+There is no pre-defined schema like in relational databases like MySQL. Each document can have a unique set of <code>data</code> The `_id` field is the only guaranteed value attached to any document. It is dependent on the user to implement field enforcement in your applications, and to ensure that the data fields are consistent across all objects if that is required. 
+</p>
 <br>
+<p>
+<code>Attribute</code> is a class that serves the sole purpose of being a proxy between fields passed in the API requests. When serialized as a JSON object, it appears as follows (with example values)
+</p>
 
-`AttributeContainer` is a class that serves the sole purpose of being a proxy between JSON objects passed in the API requests. When serialized as a JSON object, it appears as the following (with example values),
 ```json
 {
     "some-key": "some-value"
 }
 ```
-
-Some of the requests require a single value to be passed in to the request body in the form of an `AttributeContainer` object, as this is the only way to maintain flexible typing within the database. The `AttributeContainer` class acts as a model within the program to translate that data seamlessly to the `Collection` and `DataObject` classes.
- 
+<p>
+Some of the requests require a single value to be passed in to the request body in a form resembling an <code>Attribute</code> object. The <code>Attribute</code> class acts as a model within the program to translate that data seamlessly to the <code>Collection</code> and <code>Document</code> classes.
+</p>
 <br>
-
-`Collection` is simply a container within the program for a database and its name. When written as a JSON object, it appears as the following (with example values),
+<p>
+<code>Collection</code> is a grouping of documents within a file. When written as a JSON object, it appears as follows (with example values)
+</p>
 
 ```json
 {
     "name": "some-name",
-    "data-list": [
+    "list": [
         {
         "id": 0,
         "data": {"some-key": "some-value"}
@@ -172,184 +179,186 @@ Some of the requests require a single value to be passed in to the request body 
     ]
 }
 ```
+<p>
+Internally, the name corresponds to a filename in the <code>Collections</code> folder, which contains the serialized data of <code>list</code>.
+</p>
 
-The `Collection` class exists to keep track of each database within the server. Within the program, the name corresponds to a filename in the `Databases` folder, which is what comprises the `dataList` in the class.
+<br>
 
+<h2>Database API Reference</h2>
+(All of these structures can also be found in the <a href="https://github.com/alchemicode/jserv-core">jServ core library</a>)
+<br><br>
+jServ's database operations are called through HTTP requests. This eliminates the need for a query language, as the properties of every operation can be encapsulated into serialized objects passed into each request.
 
-<h3>API Reference</h3>
-
-jServ's API is built around a system of specific requests and query parameters.
-
-
-<h4>GET Requests</h4>
- 
+<h3>Operations</h3>
 <dl>
-    <dt><code>__/query</code></dt>
-    <dd>
-    Queries a collection for a specific object by id. Returns the whole object in JSON.
-    <br>
-    Query Parameters:
-        <ul>
-            <li>db - The name of the collection you're querying</li>
-            <li>id - The id of the object you're querying</li>
-        </ul>
-    </dd>
+<dt><code>__/j/db/query</code></dt>
+<dd>
+<p>
+Queries a list of, or all, collections for documents based on a set of rules. Returns a list of documents.
+<br>
+Possible properties of a query, written in JSON format, are as follows:
+</p>
+        
+```json
+{
+    //List of collections to be queried
+    //If omitted, all collections will be queried
+    "collections": [
+        "some-collection", 
+        "another-collection"
+    ],
+    //List of attributes a document must have
+    "has": [
+        "some-attribute",
+        "another-attribute"
+    ],
+    //Attributes that must be equal to a given value
+    "equals": {
+        "some-attribute": "some-value"
+    },
+    //Attributes that must not be equal to a given value
+    "not-equals": {
+        "some-attribute": "some-value"
+    },
+    //Attributes that must be less than a given value
+    "lt": {
+        "some-attribute": "some-value"
+    },
+    //Attributes that must be less than or equal to a given value
+    "lte": {
+        "some-attribute": "some-value"
+    },
+    //Attributes that must be greater than or equal to a given value
+    "gte": {
+        "some-attribute": "some-value"
+    },
+    //Attributes that must be greater than a given value
+    "gt": {
+        "some-attribute": "some-value"
+    },
+    //Attributes that must be between two given values
+    "between": {
+        "some-attribute": ["lower-value", "upper-value"]
+    }
+}
+```
+<p>This request returns the list of documents queried.</p>
+</dd>
 </dl>
-<dl>
-    <dt><code>__/query/objects</code></dt>
-    <dd>
-    Queries a collection for all objects. Returns a list of objects in JSON.
-    <br>
-    Query Parameters:
-        <ul>
-            <li>db - The name of the collection you're querying</li>
-        </ul>
-    </dd>
-</dl>
-<dl>
-    <dt><code>__/query/attribute</code></dt>
-    <dd>
-    Queries a collection for a specific attribute of an object by id and name. Returns the attribute value in an <code>AttributeContainer</code> object.
-    <br>
-    Query Parameters:
-        <ul>
-            <li>db - The name of the collection you're querying</li>
-            <li>id - The id of the object you're querying</li>
-            <li>a - The name of the attribute you're querying</li>
-        </ul>
-    </dd>
-</dl>
-<dl>
-    <dt><code>__/query/allAttributes</code></dt>
-    <dd>
-    Queries a collection for all attributes of a specific key in every object. If an object does not have an attribute of the passed key, the object is skipped. The query returns a list of ids of the DataObjects that have the attribute.
-    <br>
-    Query Parameters:
-        <ul>
-            <li>db - The name of the collection you're querying</li>
-            <li>a - the name of the attributes you're querying</li>
-        </ul>
-    </dd>
-</dl>
-<dl>
-    <dt><code>__/query/byAttribute</code></dt>
-    <dd>
-    Queries a collection for objects that share the same value of a specific attribute. If an object does not have an attribute of the passed key, the object is skipped. The query returns a list of all the objects with the attribute and value. (<em>Requires an <code>AttributeContainer</code> JSON object to be passed in the body</em>)
-    <br>
-    Query Parameters:
-        <ul>
-            <li>db - The name of the collection you're querying</li>
-            <li>a - The name of the attributes you're querying</li>
-        </ul>
-    </dd>
-</dl>
-<dl>
-    <dt><code>__/query/newId</code></dt>
-    <dd>
-    Returns an unused id in a collection
-    <br>
-    Query Parameters:
-        <ul>
-            <li>db - The name of the collection you're querying</li>
-        </ul>
-    </dd>
-</dl>
- 
-<h4>POST Requests</h4>
 
 <dl>
-    <dt><code>__/add</code></dt>
-    <dd>
-    Adds a new empty object to a collection by id.
-    <br>
-    Query Parameters:
-        <ul>
-            <li>db - The name of the collection you're adding to</li>
-            <li>id - The id of the object you're adding</li>
-        </ul>
-    </dd>
-</dl>
-<dl>
-    <dt><code>__/add/object</code></dt>
-    <dd>
-        Adds a new JSON object to a collection (<em>Requires an <code>DataObject</code> JSON object to be passed in the body</em>).
-    <br>
-    Query Parameters:
-        <ul>
-            <li>db - The name of the collection you're adding to</li>
-        </ul>
-    </dd>
-</dl>
-<dl>
-    <dt><code>__/add/attribute</code></dt>
-    <dd>
-    Adds an attribute to an object in a collection by id (<em>Requires an <code>AttributeContainer</code> JSON object to be passed in the body</em>).
-    <br>
-    Query Parameters:
-        <ul>
-            <li>db - The name of the collection you're object is in</li>
-            <li>id - The id of the object you're adding to</li>
-            <li>a - The name of the attribute you're adding</li>
-        </ul>
-    </dd>
-</dl>
-<dl>
-    <dt><code>__/mod/object</code></dt>
-    <dd>
-    Modifies the id of an object in a collection by id.
-    <br>
-    Query Parameters:
-        <ul>
-            <li>db - The name of the collection the object is in</li>
-            <li>id - The id of the object you're modifying</li>
-            <li>v - The new id of the object you're modifying</li>
-        </ul>
-    </dd>
-</dl>
-<dl>
-    <dt><code>__/mod/attribute</code></dt>
-    <dd>
-    Modifies an attribute of an object in a collection by id (<em>Requires an <code>AttributeContainer</code> JSON object to be passed in the body</em>).
-    <br>
-    Query Parameters:
-        <ul>
-            <li>db - The name of the collection the object is in</li>
-            <li>id - The id of the object you're modifying</li>
-            <li>a - The name of the attribute you're modifying</li>
-        </ul>
-    </dd>
+<dt><code>__/j/db/add</code></dt>
+<dd>
+<p>
+Adds documents to, or attributes to specific documents in, a collection.
+<br>
+The format of an Add, written in JSON, is as follows:
+</p>
+
+```json
+{
+    //Name of the collection to add to, will fail if omitted
+    "collection": "some-collection",
+    //List of full documents to add to the collection
+    "documents": [
+        {
+            "_id": "some-new-id",
+            "data": {
+                "some-attribute": "some-value"
+            }
+        }
+    ],
+    //Map of new attributes that will be added to the documents they are listed under. Note that "_id" cannot be added as an attribute
+    "values":{
+        "some-document-id": {
+            "some-new-attribute": "some-new-value"
+        }
+    }
+}
+```
+<p>This request returns a list of elements added, and elements skipped.</p>
+</dd>
 </dl>
 
-<h4>DELETE Requests</h4>
+<dl>
+    <dt><code>__/j/db/mod</code></dt>
+    <dd>
+    <p>
+    Modifies attributes of a specific document within a collection.
+    <br>
+    The format of a Mod, written in JSON, is as follows:
+    </p>
+
+```json
+{
+    //Collection containing the document. Will fail if this collection does not exist
+    "collection": "some-collection",
+    //_id of Document to be modified. Will fail if this document does not exist
+    "document": "some-document-id",
+    //Map of attributes to be changed. Note that the _id can also be changed in this operation.
+    "values":{
+        "_id": "some-new-id",
+        "some-attribute": "some-new-value"
+    }
+}
+```
+<p>This request returns a list of changes made, and changes skipped.</p>
+</dd>
+</dl>
 
 <dl>
-    <dt><code>__/delete/object</code></dt>
+    <dt><code>__/j/db/delete</code></dt>
     <dd>
-    Deletes an object from a collection by id.
+    <p>
+    Deletes attributes of a specific document within a collection.
     <br>
-    Query Parameters:
-        <ul>
-            <li>db - The name of the collection you're deleting from</li>
-            <li>id - The id of the object you're deleting</li>
-        </ul>
-    </dd>
+    The format of a Delete, written in Json, is very similar to a Mod, as follows:
+    </p>
+
+```json
+{
+    //Collection containing the document. Will fail if this collection does not exist
+    "collection": "some-collection",
+    //_id of Document to be modified. Will fail if this document does not exist
+    "document": "some-document-id",
+    //List of attributes to be deleted. Note that _id cannot be deleted in this operation.
+    "values":[
+        "some-attribute",
+        "another-attribute"
+    ]
+}
+```
+
+<p>This request returns a list of attributes deleted, and attributes skipped.</p>
+</dd>
 </dl>
+
 <dl>
-    <dt><code>__/delete/attribute</code></dt>
+    <dt><code>__/j/db/purge</code></dt>
     <dd>
-        Deletes an attribute from an object by id.
+    <p>
+    Deletes documents from a list of, or all, collections, based on query rules.
     <br>
-    Query Parameters:
-        <ul>
-            <li>db - The name of the collection you're deleting from</li>
-            <li>id - The id of the object you're deleting</li>
-            <li>a - The name of the attribute you're deleting</li>
-        </ul>
+    See <code>__/j/db/query</code> above, as this request has an identical structure.
+    </p>
+    <p>This request returns the list of document _ids deleted.</p>
     </dd>
 </dl>
 <br>
+<h3>Skips</h3>
+<p>
+When performing operations such as Mod or Add, the request body contains rules for finding the targets of the operations. However, these may not always match up with the data, for example, trying to add a document whose _id already exists within that collection. In cases such as these, this part of the operation is skipped, and message is relayed back to the user through the HTTP Response data.
+</p>
+<br><br>
+<h2>Services</h2>
+<p>
+Services are small python scripts that can be assigned to run on specific endpoints.
+<br>This feature isn't implemented yet :(
+</p>
+
 <h2 align="center">License and Copyright Notice</h2>
 <p align="center">
-    Copyright (c) 2022, Kristofer Ter-Gabrielyan. All Rights Reserved. 
+    Copyright (c) 2024, alchemicode. All Rights Reserved. 
     Permission to modify and redistribute is granted under the terms of the Apache 2.0.
 </p>
