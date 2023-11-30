@@ -33,7 +33,7 @@
             Easy document-based database with no query language
         </th>
         <th align="center">
-            Adapt the server to your project with broad markup support and custom endpoint functions
+            Adapt the server to your project
         </th>
     </tr>
     <tr>
@@ -44,7 +44,7 @@
             jServ has a flexible data structure that allows you to customize the database and it's functionality, with or without modifying the code.<br>
         </td>
         <td align="center">
-            jServ's driving force is it's use of multiple markup languages in it's data structure, and scriptable endpoints.<br>
+            jServ's driving force is it's use of multiple markup languages in it's data structure, and custom endpoints functions powered by Python.<br>
         </td>
     </tr>
 </table>
