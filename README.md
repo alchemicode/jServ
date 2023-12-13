@@ -152,7 +152,7 @@ The database follows a document-based structure which internally relies on three
 }
 ```
 <p>
-There is no pre-defined schema like in relational databases like MySQL. Each document can have a unique set of <code>data</code> The `_id` field is the only guaranteed value attached to any document. It is dependent on the user to implement field enforcement in your applications, and to ensure that the data fields are consistent across all objects if that is required. 
+There is no pre-defined schema like in relational databases like MySQL. Each document can have a unique set of <code>data</code> The <code>_id</code> field is the only guaranteed value attached to any document. It is dependent on the user to implement field enforcement in your applications, and to ensure that the data fields are consistent across all objects if that is required. 
 </p>
 <br>
 <p>
