@@ -103,8 +103,7 @@ func Add(w http.ResponseWriter, req *http.Request) {
 		add := new(core.Add)
 		decoder := json.NewDecoder(req.Body)
 		decoder.DisallowUnknownFields()
-		err := decoder.Decode(add)
-		if err != nil {
+		if err := decoder.Decode(add); err != nil {
 			end.WithoutData("error", "Failed to parse Request Body")
 		} else {
 			db_free = false
@@ -289,10 +288,7 @@ func main() {
 					fmt.Println(" ~ Updated Collection")
 				}
 			}
-
 		}
-
 	}()
-
 	wg.Wait()
 }

@@ -113,8 +113,7 @@ func ReadCollection(c *core.Collection) {
 func readCollection(c *core.Collection, ch chan bool) {
 	path := filepath.Join("../Collections", c.Name+".dat")
 	//Reads the contents of the file as a []byte
-	content, err := os.ReadFile(path)
-	if err != nil {
+	if content, err := os.ReadFile(path); err != nil {
 		//Channel returns false if there is any error
 		ch <- false
 		fmt.Println(" > ! Error while reading file " + c.Name + ".dat")
@@ -140,8 +139,7 @@ func UpdateCollection(c *core.Collection) {
 func updateCollection(c *core.Collection, ch chan bool) {
 	path := filepath.Join("../Collections", c.Name+".dat")
 	//Reads the contents of the file as a []byte
-	bytes, ok := c.ToMsgPack()
-	if !ok {
+	if bytes, ok := c.ToMsgPack(); !ok {
 		//Channel returns false if there is any error
 		ch <- false
 		fmt.Println(" > ! Error while serializing " + c.Name + ".dat")
@@ -186,8 +184,7 @@ func GenerateAdminApiKey(ch chan bool) {
 
 // Checks for a 'new' keyword in the admin file and replaces it with a new uuid
 func GenerateUserApiKey(ch chan bool) {
-	lines := ReadFileAsLines("keys.jserv")
-	if len(lines) > 0 {
+	if lines := ReadFileAsLines("keys.jserv"); len(lines) > 0 {
 		if lines[len(lines)-1] == "new" {
 			randomuuid := uuid.New()
 			userKeys = append(userKeys, randomuuid.String())
