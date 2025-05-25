@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://alchemicode.com/images/logos/jserv.png" width="256px" height="256px">
+    <img src="https://github.com/alchemicode/website/blob/master/images/logos/jserv.png?raw=true" width="256px" height="256px">
 </p>
 
 <h1 align="center">
@@ -27,7 +27,7 @@
 <table border="0">
     <tr>
         <th align="center">
-            Build your backend fast and simple
+            Build on jServ's simple structure
         </th> 
         <th align="center">
             Easy document-based database with no query language
